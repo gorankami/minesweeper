@@ -9,6 +9,7 @@ function Cell(rowNum, colNum) {
   this.surroundingMinesCount = 0;
   this.hasMine               = false;
   this.exploded              = false;
+  this.clicksAllowed         = true;
 }
 
 Cell.prototype.getElement = function () {
@@ -24,9 +25,20 @@ Cell.prototype.render = function () {
   $(this.cellElement).css('background-image', 'url(' + icon + ')');
 };
 
+Cell.prototype.setCallbackForClearCellHit = function (callback) {
+  this.onClearCellHit = callback;
+};
+
+Cell.prototype.setCallbackForMineHit = function (callback) {
+  this.onMineHit = callback;
+};
 
 Cell.prototype.plantMine = function () {
   this.hasMine = true;
+};
+
+Cell.prototype.blockClicks = function () {
+  this.clicksAllowed = false;
 };
 
 
@@ -56,6 +68,7 @@ function setupEvents(element, cell) {
   $(element).mouseleave(mouseleave);
 
   function mousedown(event) {
+    if (!cell.clicksAllowed) return;
     if (event.which == 1 && cell.uiState === UI_STATES.HIDDEN) {
       cell.uiState = UI_STATES.BEING_PRESSED;
       cell.render();
@@ -63,9 +76,20 @@ function setupEvents(element, cell) {
   }
 
   function mouseup(event) {
+    if (!cell.clicksAllowed) return;
     if (event.which == 1) {
       if (cell.uiState === UI_STATES.BEING_PRESSED) {
         cell.uiState = UI_STATES.UNCOVERED;
+        if (cell.hasMine) {
+          cell.exploded = true;
+          if (cell.onMineHit && typeof cell.onMineHit === 'function') {
+            cell.onMineHit();
+          }
+        } else if (cell.surroundingMinesCount === 0) {
+          if (cell.onClearCellHit && typeof cell.onClearCellHit === 'function') {
+            cell.onClearCellHit(cell);
+          }
+        }
         cell.render();
       }
     } else if (event.which == 3) {
@@ -80,6 +104,7 @@ function setupEvents(element, cell) {
   }
 
   function mouseleave() {
+    if (!cell.clicksAllowed) return;
     if (cell.uiState === UI_STATES.BEING_PRESSED) {
       cell.uiState = UI_STATES.HIDDEN;
       cell.render();

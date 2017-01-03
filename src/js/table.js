@@ -1,23 +1,24 @@
-var $     = require("jquery"),
-    utils = require("./utils"),
-    Cell  = require("./cell");
+var $         = require("jquery"),
+    utils     = require("./utils"),
+    UI_STATES = require("./ui-states"),
+    Cell      = require("./cell");
 
 function Table() {
 }
+var rows = [];
 
 Table.prototype.init = function (tableElement, m, n, numMines) {
-  var rows = createTableCells(m, n);
+  rows = createTableCells(m, n);
   populateElements(tableElement, rows);
   plantMines(rows, numMines);
   setupMineCountOnCells(rows);
-  this.rows = rows;
 };
 
 Table.setupMineCountOnCells = setupMineCountOnCells;
 Table.countSurroundingMines = countSurroundingMines;
 
 Table.prototype.render = function () {
-  render(this.rows);
+  render(rows);
 };
 
 function createTableCells(maxRowNum, maxColNum) {
@@ -25,11 +26,30 @@ function createTableCells(maxRowNum, maxColNum) {
   for (var rowNum = 0; rowNum < maxRowNum; rowNum++) {
     var row = [];
     for (var colNum = 0; colNum < maxColNum; colNum++) {
-      row.push(new Cell(rowNum, colNum));
+      var cell = new Cell(rowNum, colNum);
+      cell.setCallbackForClearCellHit(clearCellHit);
+      cell.setCallbackForMineHit(mineHit);
+      row.push(cell);
     }
     rows.push(row);
   }
   return rows;
+}
+
+function clearCellHit(cell) {
+
+}
+
+function mineHit() {
+  rows.forEach(function (row) {
+    row.forEach(function (cell) {
+      cell.blockClicks();
+      if (cell.hasMine) {
+        cell.uiState = UI_STATES.UNCOVERED;
+        cell.render();
+      }
+    });
+  });
 }
 
 function populateElements(tableElement, rows) {
