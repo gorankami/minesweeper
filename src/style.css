@@ -1,12 +1,79 @@
-td, tr, img  { padding: 0px; margin: 0px; border: none; }
-table { border-collapse: collapse; }
-td, img {
+td, tr, td div {
+    padding: 0px;
+    margin: 0px;
+    border: none;
+}
+
+table {
+    border-collapse: collapse;
+    margin-top: 50px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+td, div {
     width: 20px;
     max-width: 20px;
     height: 20px;
     max-height: 20px;
 }
 
-img {
-    display: block;
+td div {
+    background-size: 20px 20px;
 }
+
+/*div.blank {*/
+    /*background-image: url('http://i.imgur.com/HM1e3Tbb.jpg');*/
+/*}*/
+
+/*div.pressed {*/
+    /*background-image: url('http://i.imgur.com/bGT8xGEb.jpg');*/
+/*}*/
+
+/*div.exposed-mine {*/
+    /*background-image: url('http://i.imgur.com/pTJ8Swhb.jpg');*/
+/*}*/
+
+/*div.exploded-mine {*/
+    /*background-image: url('http://i.imgur.com/UFmXprFb.jpg');*/
+/*}*/
+
+/*div.flag {*/
+    /*background-image: url('http://i.imgur.com/nLPvW15b.jpg');*/
+/*}*/
+
+/*div.mines-0 {*/
+    /*background-image: url('http://i.imgur.com/Flqdqi1b.jpg');*/
+/*}*/
+
+/*div.mines-1 {*/
+    /*background-image: url('http://i.imgur.com/bM8oExob.jpg');*/
+/*}*/
+
+/*div.mines-2 {*/
+    /*background-image: url('http://i.imgur.com/bQKSbqYb.jpg');*/
+/*}*/
+
+/*div.mines-3 {*/
+    /*background-image: url('http://i.imgur.com/5jNcEeVb.jpg');*/
+/*}*/
+
+/*div.mines-4 {*/
+    /*background-image: url('http://i.imgur.com/BnxjHgHb.jpg');*/
+/*}*/
+
+/*div.mines-5 {*/
+    /*background-image: url('http://i.imgur.com/RaFrMYcb.jpg');*/
+/*}*/
+
+/*div.mines-6 {*/
+    /*background-image: url('http://i.imgur.com/GlwQOy0b.jpg');*/
+/*}*/
+
+/*div.mines-7 {*/
+    /*background-image: url('http://i.imgur.com/8ngsVa8b.jpg');*/
+/*}*/
+
+/*div.mines-8 {*/
+    /*background-image: url('http://i.imgur.com/lJ8P1wab.jpg');*/
+/*}*/

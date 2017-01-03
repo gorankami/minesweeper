@@ -1,6 +1,6 @@
-var assert = require('assert');
-var utils  = require('../src/js/utils');
-var Cell   = require('../src/js/cell');
+var assert = require('assert'),
+    utils  = require('../src/js/utils'),
+    Cell   = require('../src/js/cell');
 
 describe("Utility functions", function () {
   describe("Random number", function () {
@@ -9,24 +9,6 @@ describe("Utility functions", function () {
         var randNum = utils.rand(0, 10);
         assert(randNum >= 0 && randNum < 10);
       }
-    });
-  });
-
-  describe('Check if cell is a mine', function () {
-
-    it('should return false when cell is null', function () {
-      assert(utils.hasMine(null) === false)
-    });
-
-    it('should return false when cell has no mine', function () {
-      var cell = new Cell();
-      assert(utils.hasMine(cell) === false)
-    });
-
-    it('should return true when cell has a mine', function () {
-      var cell = new Cell();
-      cell.plantMine();
-      assert(utils.hasMine(cell) === true)
     });
   });
 
@@ -41,28 +23,28 @@ describe("Utility functions", function () {
       var middle = rows[1][1];
 
       it('should return rows[0][1] for getCellUp', function () {
-        assert(utils.getCellUp(middle, rows) === rows[0][1]);
+        assert.equal(utils.getCellUp(middle, rows), rows[0][1]);
       });
       it('should return rows[1][0] for getCellLeft', function () {
-        assert(utils.getCellLeft(middle, rows) === rows[1][0]);
+        assert.equal(utils.getCellLeft(middle, rows), rows[1][0]);
       });
       it('should return rows[1][2] for getCellRight', function () {
-        assert(utils.getCellRight(middle, rows) === rows[1][2]);
+        assert.equal(utils.getCellRight(middle, rows), rows[1][2]);
       });
       it('should return rows[2][1] for getCellDown', function () {
-        assert(utils.getCellDown(middle, rows) === rows[2][1]);
+        assert.equal(utils.getCellDown(middle, rows), rows[2][1]);
       });
       it('should return rows[0][0] for getCellUpLeft', function () {
-        assert(utils.getCellUpLeft(middle, rows) === rows[0][0]);
+        assert.equal(utils.getCellUpLeft(middle, rows), rows[0][0]);
       });
       it('should return rows[0][2] for getCellUpRight', function () {
-        assert(utils.getCellUpRight(middle, rows) === rows[0][2]);
+        assert.equal(utils.getCellUpRight(middle, rows), rows[0][2]);
       });
       it('should return rows[2][0] for getCellDownLeft', function () {
-        assert(utils.getCellDownLeft(middle, rows) === rows[2][0]);
+        assert.equal(utils.getCellDownLeft(middle, rows), rows[2][0]);
       });
       it('should return rows[2][2] for getCellDownRight', function () {
-        assert(utils.getCellDownRight(middle, rows) === rows[2][2]);
+        assert.equal(utils.getCellDownRight(middle, rows), rows[2][2]);
       });
     });
 
@@ -70,28 +52,28 @@ describe("Utility functions", function () {
       var middle = rows[1][1];
 
       it('should return true for getCellUp', function () {
-        assert(utils.getCellUp(middle, rows) !== null);
+        assert.notEqual(utils.getCellUp(middle, rows), null);
       });
       it('should return true for getCellLeft', function () {
-        assert(utils.getCellLeft(middle, rows) !== null);
+        assert.notEqual(utils.getCellLeft(middle, rows), null);
       });
       it('should return true for getCellRight', function () {
-        assert(utils.getCellRight(middle, rows) !== null);
+        assert.notEqual(utils.getCellRight(middle, rows), null);
       });
       it('should return true for getCellDown', function () {
-        assert(utils.getCellDown(middle, rows) !== null);
+        assert.notEqual(utils.getCellDown(middle, rows), null);
       });
       it('should return true for getCellUpLeft', function () {
-        assert(utils.getCellUpLeft(middle, rows) !== null);
+        assert.notEqual(utils.getCellUpLeft(middle, rows), null);
       });
       it('should return true for getCellUpRight', function () {
-        assert(utils.getCellUpRight(middle, rows) !== null);
+        assert.notEqual(utils.getCellUpRight(middle, rows), null);
       });
       it('should return true for getCellDownLeft', function () {
-        assert(utils.getCellDownLeft(middle, rows) !== null);
+        assert.notEqual(utils.getCellDownLeft(middle, rows), null);
       });
       it('should return true for getCellDownRight', function () {
-        assert(utils.getCellDownRight(middle, rows) !== null);
+        assert.notEqual(utils.getCellDownRight(middle, rows), null);
       });
     });
 

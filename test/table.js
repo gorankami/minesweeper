@@ -1,6 +1,6 @@
-var assert = require('assert');
-var Table  = require('../src/js/table');
-var STATES = require('../src/js/states');
+var assert = require('assert'),
+    Cell   = require('../src/js/cell'),
+    Table  = require('../src/js/table');
 
 describe("Table functions", function () {
   describe("Counting mines", function () {
@@ -55,33 +55,33 @@ describe("Table functions", function () {
     rows[1][0].plantMine();
     Table.setupMineCountOnCells(rows);
     it('Cell 0,0 should be a mine', function () {
-      assert.equal(rows[0][0].state, STATES.EXPOSEDBOMB);
+      assert(rows[0][0].hasMine);
     });
 
     it('Cell 0,1 should have two mines detected', function () {
-      assert.equal(rows[0][1].state, STATES.BOMBS2);
+      assert.equal(rows[0][1].surroundingMinesCount, 2);
     });
     it('Cell 0,2 should have zero mines detected', function () {
-      assert.equal(rows[0][2].state, STATES.BOMBS0);
+      assert.equal(rows[0][2].surroundingMinesCount, 0);
     });
     it('Cell 1,0 should be a mine', function () {
-      assert.equal(rows[1][0].state, STATES.EXPOSEDBOMB);
+      assert(rows[1][0].hasMine);
     });
     it('Cell 1,1 should have two mines detected', function () {
-      assert.equal(rows[1][1].state, STATES.BOMBS2);
+      assert.equal(rows[1][1].surroundingMinesCount, 2);
     });
     it('Cell 1,2 should have zero mines detected', function () {
-      assert.equal(rows[1][2].state, STATES.BOMBS0);
+      assert.equal(rows[1][2].surroundingMinesCount, 0);
     });
     it('Cell 2,0 should have one mine detected', function () {
-      assert.equal(rows[2][0].state, STATES.BOMBS1);
+      assert.equal(rows[2][0].surroundingMinesCount, 1);
     });
 
     it('Cell 2,1 should have one mine detected', function () {
-      assert.equal(rows[2][1].state, STATES.BOMBS1);
+      assert.equal(rows[2][1].surroundingMinesCount, 1);
     });
     it('Cell 2,2 should have zero mines detected', function () {
-      assert.equal(rows[2][2].state, STATES.BOMBS0);
+      assert.equal(rows[2][2].surroundingMinesCount, 0);
     });
   });
 });

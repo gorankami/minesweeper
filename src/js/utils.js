@@ -1,9 +1,7 @@
-var $      = require('jquery'),
-    STATES = require('./states');
+var UI_STATES = require('./ui-states');
 
 var utils = {
   rand            : rand,
-  hasMine         : hasMine,
   getCellUp       : getCellUp,
   getCellLeft     : getCellLeft,
   getCellRight    : getCellRight,
@@ -18,10 +16,6 @@ module.exports = utils;
 
 function rand(min, max) {
   return Math.floor(Math.random() * max) + min;
-}
-
-function hasMine(cell) {
-  return !!(cell && cell.state === STATES.EXPOSEDBOMB);
 }
 
 function getCellUp(pivotCell, rows) {

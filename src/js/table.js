@@ -1,7 +1,6 @@
-var $      = require("jquery"),
-    utils  = require("./utils"),
-    STATES = require("./states")
-Cell       = require("./cell");
+var $     = require("jquery"),
+    utils = require("./utils"),
+    Cell  = require("./cell");
 
 function Table() {
 }
@@ -38,7 +37,9 @@ function populateElements(tableElement, rows) {
   rows.forEach(function (row) {
     var rowElement = $('<tr></tr>');
     row.forEach(function (cell) {
-      rowElement.append(cell.getElement());
+      var td = $('<td></td>');
+      td.append(cell.getElement());
+      rowElement.append(td);
     });
     tableElement.append(rowElement);
   });
@@ -53,9 +54,6 @@ function render(rows) {
 }
 
 function plantMines(rows, numMines) {
-  // rows[0][0].plantMine();
-  // rows[0][1].plantMine();
-  //
   var plantedMineCells = [];
   while (plantedMineCells.length < numMines) {
     var randRow  = rows[utils.rand(0, rows.length - 1)];
@@ -70,12 +68,11 @@ function plantMines(rows, numMines) {
 function setupMineCountOnCells(rows) {
   rows.forEach(function (row) {
     row.forEach(function (cell) {
-      if (!utils.hasMine(cell)) {
-        var count  = countSurroundingMines(cell, rows);
-        cell.state = STATES['BOMBS' + count];
+      if (!cell.hasMine) {
+        cell.surroundingMinesCount = countSurroundingMines(cell, rows);
       }
-    })
-  })
+    });
+  });
 }
 
 function countSurroundingMines(pivotCell, rows) {
@@ -89,14 +86,14 @@ function countSurroundingMines(pivotCell, rows) {
   var cellDownRight = utils.getCellDownRight(pivotCell, rows);
 
   var minesNum = 0;
-  if (utils.hasMine(cellUpLeft)) minesNum++;
-  if (utils.hasMine(cellUp)) minesNum++;
-  if (utils.hasMine(cellUpRight)) minesNum++;
-  if (utils.hasMine(cellLeft)) minesNum++;
-  if (utils.hasMine(cellRight)) minesNum++;
-  if (utils.hasMine(cellDownLeft)) minesNum++;
-  if (utils.hasMine(cellDown)) minesNum++;
-  if (utils.hasMine(cellDownRight)) minesNum++;
+  if (cellUpLeft && cellUpLeft.hasMine) minesNum++;
+  if (cellUp && cellUp.hasMine) minesNum++;
+  if (cellUpRight && cellUpRight.hasMine) minesNum++;
+  if (cellLeft && cellLeft.hasMine) minesNum++;
+  if (cellRight && cellRight.hasMine) minesNum++;
+  if (cellDownLeft && cellDownLeft.hasMine) minesNum++;
+  if (cellDown && cellDown.hasMine) minesNum++;
+  if (cellDownRight && cellDownRight.hasMine) minesNum++;
   return minesNum;
 }
 
