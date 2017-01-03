@@ -4,7 +4,7 @@ Minesweeper clone, written overnight
 ##Instructions
 First, install modules with `npm install`. 
 
-Start the app with `npm start`
+Build the app with `npm start`. That will create `build/index.html` that you can launch in any browser (like `firefox ./build/index.html`).
 
 Run tests with `npm test`
 
