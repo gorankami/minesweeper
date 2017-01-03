@@ -3,6 +3,11 @@ var $         = require("jquery"),
     UI_STATES = require("./ui-states"),
     Cell      = require("./cell");
 
+/**
+ * Table component
+ * @desc Contains cells in rows and allows cell navigation and control
+ * @constructor
+ */
 function Table() {
 }
 var rows = [];
@@ -14,6 +19,7 @@ Table.prototype.init = function (tableElement, m, n, numMines) {
   setupMineCountOnCells(rows);
 };
 
+//useful for tests
 Table.setupMineCountOnCells = setupMineCountOnCells;
 Table.countSurroundingMines = countSurroundingMines;
 
@@ -29,6 +35,8 @@ function createTableCells(maxRowNum, maxColNum) {
       var cell = new Cell(rowNum, colNum);
       cell.setCallbackForClearCellHit(clearCellHit);
       cell.setCallbackForMineHit(mineHit);
+      cell.setCallbackMiddleClick(middleHit);
+      cell.setCallbackMiddleClickEnd(middleHitEnd);
       row.push(cell);
     }
     rows.push(row);
@@ -38,7 +46,10 @@ function createTableCells(maxRowNum, maxColNum) {
 
 function clearCellHit(cell) {
   utils.getNeigbouringCellsArray(cell, rows).forEach(function (neighbourCell) {
-    neighbourCell && neighbourCell.forceLeftClick();
+    if (neighbourCell) {
+      neighbourCell.forceLeftDown();
+      neighbourCell.forceLeftUp();
+    }
   });
 }
 
@@ -54,6 +65,32 @@ function mineHit() {
     });
   });
 }
+
+function middleHit(cell) {
+  utils.getNeigbouringCellsArray(cell, rows).forEach(function (neighbourCell) {
+    neighbourCell && neighbourCell.forceLeftDown();
+  });
+}
+
+function middleHitEnd(cell) {
+  var neighbours = utils.getNeigbouringCellsArray(cell, rows);
+  var flagged    = neighbours.filter(function (neighbourCell) {
+    return neighbourCell && neighbourCell.uiState === UI_STATES.FLAGGED
+  });
+  if (flagged.length === cell.surroundingMinesCount) {
+    neighbours.forEach(function (neighbourCell) {
+      if (neighbourCell && neighbourCell.uiState !== UI_STATES.FLAGGED) {
+        neighbourCell.forceLeftUp();
+        neighbourCell.forceLeftDown();
+      }
+    });
+  } else {
+    neighbours.forEach(function (neighbourCell) {
+      neighbourCell && neighbourCell.cancelStateChange();
+    });
+  }
+}
+
 
 function populateElements(tableElement, rows) {
   tableElement.empty();
@@ -100,8 +137,8 @@ function setupMineCountOnCells(rows) {
 
 function countSurroundingMines(cell, rows) {
   var minesNum = 0;
-  utils.getNeigbouringCellsArray(cell, rows).forEach(function (item) {
-    item && item.hasMine && minesNum++;
+  utils.getNeigbouringCellsArray(cell, rows).forEach(function (neighbourCell) {
+    neighbourCell && neighbourCell.hasMine && minesNum++;
   });
   return minesNum;
 }

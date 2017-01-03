@@ -1,4 +1,5 @@
-var UI_STATES = require('./ui-states');
+var UI_STATES = require('./ui-states'),
+    icons     = require('./icons');
 
 var utils = {
   rand                    : rand,
@@ -10,7 +11,8 @@ var utils = {
   getCellUpRight          : getCellUpRight,
   getCellDownLeft         : getCellDownLeft,
   getCellDownRight        : getCellDownRight,
-  getNeigbouringCellsArray: getNeigbouringCellsArray
+  getNeigbouringCellsArray: getNeigbouringCellsArray,
+  getIconForCellState     : getIconForCellState
 };
 
 module.exports = utils;
@@ -61,5 +63,25 @@ function getNeigbouringCellsArray(cell, rows) {
     getCellDownLeft(cell, rows),
     getCellDown(cell, rows),
     getCellDownRight(cell, rows)
-  ]
+  ];
+}
+
+function getIconForCellState(cell) {
+  switch (cell.uiState) {
+    case UI_STATES.BEING_PRESSED:
+      return icons.pressed;
+    case UI_STATES.FLAGGED:
+      return icons.flag;
+    case UI_STATES.UNCOVERED:
+      if (cell.exploded) {
+        return icons.explodedBomb;
+      } else if (cell.hasMine) {
+        return icons.exposedBomb;
+      } else {
+        return icons.bombs[cell.surroundingMinesCount];
+      }
+    case UI_STATES.HIDDEN:
+    default:
+      return icons.blank;
+  }
 }
