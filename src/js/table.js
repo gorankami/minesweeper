@@ -21,12 +21,12 @@ Table.prototype.render = function () {
   render(this.rows);
 };
 
-function createTableCells(m, n) {
+function createTableCells(maxRowNum, maxColNum) {
   var rows = [];
-  for (var x = 0; x < m; x++) {
+  for (var rowNum = 0; rowNum < maxRowNum; rowNum++) {
     var row = [];
-    for (var y = 0; y < n; y++) {
-      row.push(new Cell(x, y));
+    for (var colNum = 0; colNum < maxColNum; colNum++) {
+      row.push(new Cell(rowNum, colNum));
     }
     rows.push(row);
   }
@@ -53,18 +53,18 @@ function render(rows) {
 }
 
 function plantMines(rows, numMines) {
-  rows[0][0].plantMine();
-  rows[0][1].plantMine();
+  // rows[0][0].plantMine();
+  // rows[0][1].plantMine();
   //
-  // var plantedMineCells = [];
-  // while (plantedMineCells.length < numMines) {
-  //   var randRow  = rows[utils.rand(0, rows.length - 1)];
-  //   var randCell = randRow[utils.rand(0, randRow.length - 1)];
-  //   if (plantedMineCells.indexOf(randCell) < 0) { //don't pick the same cell twice
-  //     plantedMineCells.push(randCell);
-  //     randCell.plantMine();
-  //   }
-  // }
+  var plantedMineCells = [];
+  while (plantedMineCells.length < numMines) {
+    var randRow  = rows[utils.rand(0, rows.length - 1)];
+    var randCell = randRow[utils.rand(0, randRow.length - 1)];
+    if (plantedMineCells.indexOf(randCell) < 0) { //don't pick the same cell twice
+      plantedMineCells.push(randCell);
+      randCell.plantMine();
+    }
+  }
 }
 
 function setupMineCountOnCells(rows) {

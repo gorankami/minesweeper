@@ -1,9 +1,9 @@
 var $      = require("jquery"),
     STATES = require("./states");
 
-function Cell(x, y) {
-  this.x     = x;
-  this.y     = y;
+function Cell(rowNum, colNum) {
+  this.rowNum     = rowNum;
+  this.colNum     = colNum;
   this.state = STATES.BLANK;
 }
 

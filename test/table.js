@@ -14,7 +14,7 @@ describe("Table functions", function () {
 
 
     it('Cell 0,1 should have two mines detected', function () {
-      var count = Table.countSurroundingMines(rows[0][0], rows);
+      var count = Table.countSurroundingMines(rows[0][1], rows);
       assert.equal(count, 2);
     });
     it('Cell 0,2 should have zero mines detected', function () {

@@ -25,33 +25,33 @@ function hasMine(cell) {
 }
 
 function getCellUp(pivotCell, rows) {
-  return pivotCell.y !== 0 ? rows[pivotCell.y - 1][pivotCell.x] : null;
+  return pivotCell.rowNum !== 0 ? rows[pivotCell.rowNum - 1][pivotCell.colNum] : null;
 }
 
 function getCellLeft(pivotCell, rows) {
-  return pivotCell.x !== 0 ? rows[pivotCell.y][pivotCell.x - 1] : null;
+  return pivotCell.colNum !== 0 ? rows[pivotCell.rowNum][pivotCell.colNum - 1] : null;
 }
 
 function getCellRight(pivotCell, rows) {
-  return pivotCell.x < rows[0].length - 1 ? rows[pivotCell.y][pivotCell.x + 1] : null;
+  return pivotCell.colNum < rows[0].length - 1 ? rows[pivotCell.rowNum][pivotCell.colNum + 1] : null;
 }
 
 function getCellDown(pivotCell, rows) {
-  return pivotCell.y < rows.length - 1 ? rows[pivotCell.y + 1][pivotCell.x] : null;
+  return pivotCell.rowNum < rows.length - 1 ? rows[pivotCell.rowNum + 1][pivotCell.colNum] : null;
 }
 
 function getCellUpLeft(pivotCell, rows) {
-  return pivotCell.y !== 0 && pivotCell.x !== 0 ? rows[pivotCell.y - 1][pivotCell.x-1] : null;
+  return pivotCell.rowNum !== 0 && pivotCell.colNum !== 0 ? rows[pivotCell.rowNum - 1][pivotCell.colNum - 1] : null;
 }
 
 function getCellUpRight(pivotCell, rows) {
-  return pivotCell.y !== 0 && pivotCell.x < rows[0].length - 1 ? rows[pivotCell.y - 1][pivotCell.x+1] : null;
+  return pivotCell.rowNum !== 0 && pivotCell.colNum < rows[0].length - 1 ? rows[pivotCell.rowNum - 1][pivotCell.colNum + 1] : null;
 }
 
 function getCellDownLeft(pivotCell, rows) {
-  return pivotCell.y < rows.length - 1 && pivotCell.x !== 0 ? rows[pivotCell.y + 1][pivotCell.x-1] : null;
+  return pivotCell.rowNum < rows.length - 1 && pivotCell.colNum !== 0 ? rows[pivotCell.rowNum + 1][pivotCell.colNum - 1] : null;
 }
 
 function getCellDownRight(pivotCell, rows) {
-  return pivotCell.y < rows.length - 1 &&  pivotCell.x < rows[0].length - 1 ? rows[pivotCell.y + 1][pivotCell.x+1] : null;
+  return pivotCell.rowNum < rows.length - 1 && pivotCell.colNum < rows[0].length - 1 ? rows[pivotCell.rowNum + 1][pivotCell.colNum + 1] : null;
 }
