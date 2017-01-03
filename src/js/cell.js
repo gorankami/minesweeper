@@ -41,6 +41,13 @@ Cell.prototype.blockClicks = function () {
   this.clicksAllowed = false;
 };
 
+Cell.prototype.forceLeftClick = function () {
+  onMouseDown(1, this);
+  onMouseUp(1, this);
+};
+
+module.exports = Cell;
+
 
 function getIconForCellState(cell) {
   switch (cell.uiState) {
@@ -63,54 +70,59 @@ function getIconForCellState(cell) {
 }
 
 function setupEvents(element, cell) {
-  $(element).mousedown(mousedown);
-  $(element).mouseup(mouseup);
-  $(element).mouseleave(mouseleave);
+  $(element).mousedown(function (event) {
+    onMouseDown(event.which, cell);
+  });
+  $(element).mouseup(function (event) {
+    onMouseUp(event.which, cell);
+  });
+  $(element).mouseleave(function (event) {
+    onMouseLeave(cell);
+  });
+}
 
-  function mousedown(event) {
-    if (!cell.clicksAllowed) return;
-    if (event.which == 1 && cell.uiState === UI_STATES.HIDDEN) {
-      cell.uiState = UI_STATES.BEING_PRESSED;
+function onMouseDown(mouseKey, cell) {
+  if (!cell.clicksAllowed) return;
+  if (mouseKey == 1 && cell.uiState === UI_STATES.HIDDEN) {
+    cell.uiState = UI_STATES.BEING_PRESSED;
+    cell.render();
+  }
+}
+
+function onMouseUp(mouseKey, cell) {
+  if (!cell.clicksAllowed) return;
+  if (mouseKey == 1) {
+    if (cell.uiState === UI_STATES.BEING_PRESSED) {
+      cell.uiState = UI_STATES.UNCOVERED;
+      if (cell.hasMine) {
+        cell.exploded = true;
+        if (cell.onMineHit && typeof cell.onMineHit === 'function') {
+          cell.onMineHit();
+        }
+      } else if (cell.surroundingMinesCount === 0) {
+        if (cell.onClearCellHit && typeof cell.onClearCellHit === 'function') {
+          cell.onClearCellHit(cell);
+        }
+      }
       cell.render();
     }
-  }
-
-  function mouseup(event) {
-    if (!cell.clicksAllowed) return;
-    if (event.which == 1) {
-      if (cell.uiState === UI_STATES.BEING_PRESSED) {
-        cell.uiState = UI_STATES.UNCOVERED;
-        if (cell.hasMine) {
-          cell.exploded = true;
-          if (cell.onMineHit && typeof cell.onMineHit === 'function') {
-            cell.onMineHit();
-          }
-        } else if (cell.surroundingMinesCount === 0) {
-          if (cell.onClearCellHit && typeof cell.onClearCellHit === 'function') {
-            cell.onClearCellHit(cell);
-          }
-        }
-        cell.render();
-      }
-    } else if (event.which == 3) {
-      if (cell.uiState === UI_STATES.FLAGGED) {
-        cell.uiState = UI_STATES.HIDDEN;
-        cell.render();
-      } else if (cell.uiState === UI_STATES.HIDDEN) {
-        cell.uiState = UI_STATES.FLAGGED;
-        cell.render();
-      }
-    }
-  }
-
-  function mouseleave() {
-    if (!cell.clicksAllowed) return;
-    if (cell.uiState === UI_STATES.BEING_PRESSED) {
+  } else if (mouseKey == 3) {
+    if (cell.uiState === UI_STATES.FLAGGED) {
       cell.uiState = UI_STATES.HIDDEN;
+      cell.render();
+    } else if (cell.uiState === UI_STATES.HIDDEN) {
+      cell.uiState = UI_STATES.FLAGGED;
       cell.render();
     }
   }
 }
 
-module.exports = Cell;
+function onMouseLeave(cell) {
+  if (!cell.clicksAllowed) return;
+  if (cell.uiState === UI_STATES.BEING_PRESSED) {
+    cell.uiState = UI_STATES.HIDDEN;
+    cell.render();
+  }
+}
+
 

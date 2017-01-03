@@ -37,8 +37,11 @@ function createTableCells(maxRowNum, maxColNum) {
 }
 
 function clearCellHit(cell) {
-
+  utils.getNeigbouringCellsArray(cell, rows).forEach(function (neighbourCell) {
+    neighbourCell && neighbourCell.forceLeftClick();
+  });
 }
+
 
 function mineHit() {
   rows.forEach(function (row) {
@@ -95,25 +98,11 @@ function setupMineCountOnCells(rows) {
   });
 }
 
-function countSurroundingMines(pivotCell, rows) {
-  var cellUpLeft    = utils.getCellUpLeft(pivotCell, rows);
-  var cellUp        = utils.getCellUp(pivotCell, rows);
-  var cellUpRight   = utils.getCellUpRight(pivotCell, rows);
-  var cellLeft      = utils.getCellLeft(pivotCell, rows);
-  var cellRight     = utils.getCellRight(pivotCell, rows);
-  var cellDownLeft  = utils.getCellDownLeft(pivotCell, rows);
-  var cellDown      = utils.getCellDown(pivotCell, rows);
-  var cellDownRight = utils.getCellDownRight(pivotCell, rows);
-
+function countSurroundingMines(cell, rows) {
   var minesNum = 0;
-  if (cellUpLeft && cellUpLeft.hasMine) minesNum++;
-  if (cellUp && cellUp.hasMine) minesNum++;
-  if (cellUpRight && cellUpRight.hasMine) minesNum++;
-  if (cellLeft && cellLeft.hasMine) minesNum++;
-  if (cellRight && cellRight.hasMine) minesNum++;
-  if (cellDownLeft && cellDownLeft.hasMine) minesNum++;
-  if (cellDown && cellDown.hasMine) minesNum++;
-  if (cellDownRight && cellDownRight.hasMine) minesNum++;
+  utils.getNeigbouringCellsArray(cell, rows).forEach(function (item) {
+    item && item.hasMine && minesNum++;
+  });
   return minesNum;
 }
 
