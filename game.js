@@ -1,4 +1,10 @@
+var defaults = {
+  rows: 10,
+  columns: 10,
+  mines: 10
+}
+
 var tableElement = $('#table');
 var table = new Table();
-table.init(tableElement, 10, 10);
+table.init(tableElement, defaults.rows, defaults.columns, defaults.mines);
 table.render();

@@ -2,9 +2,10 @@ function Table() {
 }
 
 (function () {
-  Table.prototype.init = function (tableElement, m, n) {
+  Table.prototype.init = function (tableElement, m, n, numMines) {
     var rows = createTableCells(m, n);
     populateElements(tableElement, rows);
+    plantMines(rows, numMines);
     this.rows = rows;
   };
 
@@ -40,5 +41,21 @@ function Table() {
         cell.render();
       });
     });
+  }
+
+  function plantMines(rows, numMines){
+    var plantedMineCells = [];
+    while(plantedMineCells.length < numMines){
+      var randRow = rows[rand(0, rows.length - 1)];
+      var randCell = randRow[rand(0, randRow.length - 1)];
+      if(plantedMineCells.indexOf(randCell) < 0){ //don't pick the same cell twice
+        plantedMineCells.push(randCell);
+        randCell.plantMine();
+      }
+    }
+  }
+
+  function rand(min, max){
+    return Math.floor(Math.random() * max) + min;
   }
 })();

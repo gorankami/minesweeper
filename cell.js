@@ -15,6 +15,10 @@ function Cell(x, y){
 
   Cell.prototype.render = function(){
     this.cellElement.html(this.state);
-  }
+  };
+
+  Cell.prototype.plantMine = function(){
+    this.state = STATES.EXPOSEDBOMB;
+  };
 })();
 
