@@ -20,22 +20,19 @@ var icons = {
 
 var STATES = {};
 
-(function () {
-  STATES.BLANK        = getElement(icons.blank);
-  STATES.PRESSED      = getElement(icons.pressed);
-  STATES.EXPOSEDBOMB  = getElement(icons.exposedBomb);
-  STATES.EXPLODEDBOMB = getElement(icons.explodedBomb);
-  STATES.FLAG         = getElement(icons.flag);
-  icons.bombs.forEach(function (icon, index) {
-    STATES['BOMBS' + index] = icon;
-  });
+STATES.BLANK        = getElement(icons.blank);
+STATES.PRESSED      = getElement(icons.pressed);
+STATES.EXPOSEDBOMB  = getElement(icons.exposedBomb);
+STATES.EXPLODEDBOMB = getElement(icons.explodedBomb);
+STATES.FLAG         = getElement(icons.flag);
+icons.bombs.forEach(function (icon, index) {
+  STATES['BOMBS' + index] = getElement(icon);
+});
 
-  function getElement(image) {
-    return '<img src="' + image + '"</img>'
-  }
-})();
+function getElement(image) {
+  return '<img src="' + image + '"</img>'
+}
 
-
-
+module.exports = STATES;
 
 
