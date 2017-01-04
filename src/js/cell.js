@@ -1,7 +1,7 @@
-var $         = require("jquery"),
-    icons     = require("./icons"),
-    utils     = require("./utils"),
-    UI_STATES = require("./ui-states");
+var $           = require("jquery"),
+    utils       = require("./utils"),
+    iconService = require("./services/icon"),
+    UI_STATES   = require("./ui-states");
 
 /**
  * Cell component
@@ -21,6 +21,10 @@ function Cell(rowNum, colNum) {
   this.clicksAllowed         = true;
 }
 
+/**
+ * Singleton for cell element
+ * @returns {jQuery|HTMLElement|*}
+ */
 Cell.prototype.getElement = function () {
   if (!this.cellElement) {
     this.cellElement = $('<div/></div>');
@@ -29,7 +33,7 @@ Cell.prototype.getElement = function () {
 };
 
 Cell.prototype.render = function () {
-  var icon = utils.getIconForCellState(this);
+  var icon = iconService.getIconForCell(this);
   $(this.cellElement).css('background-image', 'url(' + icon + ')');
 };
 

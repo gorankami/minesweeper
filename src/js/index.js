@@ -1,7 +1,9 @@
-var $         = require("jquery"),
-    icons     = require("./icons"),
-    UI_STATES = require("./ui-states"),
-    Table     = require("./table");
+var $           = require("jquery"),
+    iconService = require("./services/icon"),
+    Table       = require("./table");
+
+
+iconService.cacheIcons();
 
 var tableElement = $('#table');
 var table        = new Table();
@@ -21,18 +23,4 @@ function startGame() {
     table.init(tableElement, gridSize, gridSize, numMines);
     table.render();
   }
-}
-
-
-//cache images, prevents white surfaces on clicks
-cache(icons.blank);
-cache(icons.pressed);
-cache(icons.exposedBomb);
-cache(icons.explodedBomb);
-cache(icons.flag);
-icons.bombs.forEach(cache);
-
-function cache(url) {
-  var img = new Image();
-  img.src = url;
 }
