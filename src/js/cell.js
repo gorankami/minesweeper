@@ -43,7 +43,6 @@ Cell.prototype.plantMine = function () {
 
 Cell.prototype.cancelStateChange = function () {
   this.uiState = this.previousUiState;
-  this.render();
 };
 
 module.exports = Cell;

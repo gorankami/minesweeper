@@ -1,30 +1,26 @@
 var $               = require("jquery"),
-    utils           = require("./utils"),
-    UI_STATES       = require("./ui-states"),
-    settingsService = require("./services/settings"),
-    Cell            = require("./cell");
+    utils           = require("./../utils"),
+    UI_STATES       = require("./../ui-states"),
+    settingsService = require("./settings"),
+    Cell            = require("./../cell");
 
-/**
- * Table component
- * @desc Contains cells in rows and allows cell navigation and control
- * @constructor
- */
-function Table() {
-}
 
 var rows  = [];
 var cells = [];
 
-Table.prototype.init = function (tableElement, size, numMines) {
+var tableService = {
+  init  : init,
+  render: render
+};
+
+module.exports = tableService;
+
+function init(tableElement, size, numMines) {
   createCells(size);
   populateElements(tableElement, rows);
   plantMines(numMines);
   utils.setupMineCountOnCells(cells, rows);
-};
-
-Table.prototype.render = function () {
-  render(rows);
-};
+}
 
 function createCells(size) {
   rows  = [];
@@ -60,7 +56,10 @@ function middleHitEnd(cell) {
     });
   } else {
     neighbours.forEach(function (neighbourCell) {
-      neighbourCell && neighbourCell.cancelStateChange();
+      if (neighbourCell) {
+        neighbourCell.cancelStateChange();
+        neighbourCell.render();
+      }
     });
   }
 }
@@ -187,11 +186,9 @@ function onMouseLeave(cell) {
 }
 
 
-function render(rows) {
-  rows.forEach(function (row) {
-    row.forEach(function (cell) {
-      cell.render();
-    });
+function render() {
+  cells.forEach(function (cell) {
+    cell.render();
   });
 }
 
@@ -208,5 +205,3 @@ function plantMines(numMines) {
     minesPlanted++;
   }
 }
-
-module.exports = Table;
