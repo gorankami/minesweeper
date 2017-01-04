@@ -2,7 +2,6 @@ var UI_STATES = require('./ui-states'),
     icons     = require('./icons');
 
 var utils = {
-  rand                    : rand,
   getCellUp               : getCellUp,
   getCellLeft             : getCellLeft,
   getCellRight            : getCellRight,
@@ -12,14 +11,15 @@ var utils = {
   getCellDownLeft         : getCellDownLeft,
   getCellDownRight        : getCellDownRight,
   getNeigbouringCellsArray: getNeigbouringCellsArray,
-  getIconForCellState     : getIconForCellState
+  getIconForCellState     : getIconForCellState,
+  countSurroundingMines   : countSurroundingMines,
+  setupMineCountOnCells   : setupMineCountOnCells,
+  uncoverAllMines         : uncoverAllMines,
+  blockClicks             : blockClicks
+
 };
 
 module.exports = utils;
-
-function rand(min, max) {
-  return Math.floor(Math.random() * max) + min;
-}
 
 function getCellUp(pivotCell, rows) {
   return pivotCell.rowNum !== 0 ? rows[pivotCell.rowNum - 1][pivotCell.colNum] : null;
@@ -66,6 +66,22 @@ function getNeigbouringCellsArray(cell, rows) {
   ];
 }
 
+function countSurroundingMines(cell, rows) {
+  var minesNum = 0;
+  getNeigbouringCellsArray(cell, rows).forEach(function (neighbourCell) {
+    neighbourCell && neighbourCell.hasMine && minesNum++;
+  });
+  return minesNum;
+}
+
+function setupMineCountOnCells(cells, rows) {
+  cells.forEach(function (cell) {
+    if (!cell.hasMine) {
+      cell.surroundingMinesCount = countSurroundingMines(cell, rows);
+    }
+  });
+}
+
 function getIconForCellState(cell) {
   switch (cell.uiState) {
     case UI_STATES.BEING_PRESSED:
@@ -84,4 +100,19 @@ function getIconForCellState(cell) {
     default:
       return icons.blank;
   }
+}
+
+function uncoverAllMines(cells) {
+  cells.forEach(function (cell) {
+    if (cell.hasMine) {
+      cell.uiState = UI_STATES.UNCOVERED;
+      cell.render();
+    }
+  });
+}
+
+function blockClicks(cells) {
+  cells.forEach(function (cell) {
+    cell.blockClicks();
+  });
 }

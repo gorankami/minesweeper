@@ -1,18 +1,28 @@
-var $     = require("jquery"),
-    icons = require("./icons"),
-    Table = require("./table");
-
-var defaults = {
-  rows   : 10,
-  columns: 10,
-  mines  : 10
-};
-
+var $         = require("jquery"),
+    icons     = require("./icons"),
+    UI_STATES = require("./ui-states"),
+    Table     = require("./table");
 
 var tableElement = $('#table');
 var table        = new Table();
-table.init(tableElement, defaults.rows, defaults.columns, defaults.mines);
-table.render();
+
+startGame();
+
+$("#btn-start").click(startGame);
+
+function startGame() {
+  $(".win-message").hide();
+  $(".lose-message").hide();
+  var gridSize = Number($("input#grid-size").val());
+  var numMines = Number($("input#num-mines").val());
+  if (numMines >= gridSize * gridSize) {
+    alert("Are you insane? Pick less mines if you want to live!");
+  } else {
+    table.init(tableElement, gridSize, gridSize, numMines);
+    table.render();
+  }
+}
+
 
 //cache images, prevents white surfaces on clicks
 cache(icons.blank);

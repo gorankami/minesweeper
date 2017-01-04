@@ -10,65 +10,44 @@ var $         = require("jquery"),
  */
 function Table() {
 }
-var rows = [];
+var rows  = [];
+var cells = [];
 
-Table.prototype.init = function (tableElement, m, n, numMines) {
-  rows = createTableCells(m, n);
-  populateElements(tableElement, rows);
-  plantMines(rows, numMines);
-  setupMineCountOnCells(rows);
+var defaults = {
+  width: 10, height: 10, numMines: 10
 };
 
-//useful for tests
-Table.setupMineCountOnCells = setupMineCountOnCells;
-Table.countSurroundingMines = countSurroundingMines;
+Table.prototype.init = function (tableElement, width, height, numMines) {
+  defaults.width    = width;
+  defaults.height   = height;
+  defaults.numMines = numMines;
+  createCells(width, height);
+  populateElements(tableElement, rows);
+  plantMines(numMines);
+  utils.setupMineCountOnCells(cells, rows);
+};
 
 Table.prototype.render = function () {
   render(rows);
 };
 
-function createTableCells(maxRowNum, maxColNum) {
-  var rows = [];
+function createCells(maxRowNum, maxColNum) {
+  rows  = [];
+  cells = [];
   for (var rowNum = 0; rowNum < maxRowNum; rowNum++) {
     var row = [];
     for (var colNum = 0; colNum < maxColNum; colNum++) {
       var cell = new Cell(rowNum, colNum);
-      cell.setCallbackForClearCellHit(clearCellHit);
-      cell.setCallbackForMineHit(mineHit);
-      cell.setCallbackMiddleClick(middleHit);
-      cell.setCallbackMiddleClickEnd(middleHitEnd);
       row.push(cell);
+      cells.push(cell);
     }
     rows.push(row);
   }
-  return rows;
-}
-
-function clearCellHit(cell) {
-  utils.getNeigbouringCellsArray(cell, rows).forEach(function (neighbourCell) {
-    if (neighbourCell) {
-      neighbourCell.forceLeftDown();
-      neighbourCell.forceLeftUp();
-    }
-  });
-}
-
-
-function mineHit() {
-  rows.forEach(function (row) {
-    row.forEach(function (cell) {
-      cell.blockClicks();
-      if (cell.hasMine) {
-        cell.uiState = UI_STATES.UNCOVERED;
-        cell.render();
-      }
-    });
-  });
 }
 
 function middleHit(cell) {
   utils.getNeigbouringCellsArray(cell, rows).forEach(function (neighbourCell) {
-    neighbourCell && neighbourCell.forceLeftDown();
+    neighbourCell && onMouseDown(1, neighbourCell);
   });
 }
 
@@ -77,11 +56,11 @@ function middleHitEnd(cell) {
   var flagged    = neighbours.filter(function (neighbourCell) {
     return neighbourCell && neighbourCell.uiState === UI_STATES.FLAGGED
   });
-  if (flagged.length === cell.surroundingMinesCount) {
+  if (!cell.hasMine && flagged.length === cell.surroundingMinesCount) {
     neighbours.forEach(function (neighbourCell) {
       if (neighbourCell && neighbourCell.uiState !== UI_STATES.FLAGGED) {
-        neighbourCell.forceLeftUp();
-        neighbourCell.forceLeftDown();
+        onMouseDown(1, neighbourCell);
+        onMouseUp(1, neighbourCell);
       }
     });
   } else {
@@ -99,11 +78,121 @@ function populateElements(tableElement, rows) {
     row.forEach(function (cell) {
       var td = $('<td></td>');
       td.append(cell.getElement());
+      setupCellEvents(cell);
+
+
       rowElement.append(td);
     });
     tableElement.append(rowElement);
   });
 }
+
+function setupCellEvents(cell) {
+  $(cell.getElement()).mousedown(function (event) {
+    onMouseDown(event.which, cell);
+  });
+  $(cell.getElement()).mouseup(function (event) {
+    onMouseUp(event.which, cell);
+  });
+  $(cell.getElement()).mouseleave(function () {
+    onMouseLeave(cell);
+  });
+}
+
+
+function onMouseDown(mouseKey, cell) {
+  if (!cell.clicksAllowed) return;
+  cell.previousUiState = cell.uiState;
+  switch (mouseKey) {
+    case 1:
+      if (cell.uiState === UI_STATES.HIDDEN) {
+        cell.uiState = UI_STATES.BEING_PRESSED;
+        cell.render();
+      }
+      break;
+    case 2:
+      if (cell.uiState === UI_STATES.HIDDEN) {
+        cell.uiState = UI_STATES.BEING_PRESSED;
+        cell.render();
+        middleHit(cell);
+      } else if (cell.uiState === UI_STATES.UNCOVERED) {
+        cell.render();
+        middleHit(cell);
+      }
+      break;
+  }
+}
+
+function lose(cells) {
+  utils.blockClicks(cells);
+  utils.uncoverAllMines(cells);
+  $(".lose-message").show();
+}
+
+function win(cells) {
+  utils.blockClicks(cells);
+  $(".win-message").show();
+}
+
+function onMouseUp(mouseKey, cell) {
+  if (!cell.clicksAllowed) return;
+  switch (mouseKey) {
+    case 1:
+      if (cell.uiState === UI_STATES.BEING_PRESSED) {
+        cell.uiState    = UI_STATES.UNCOVERED;
+        //check if game ended
+        var countHidden = 0;
+        cells.forEach(function (cell) {
+          if (cell.uiState === UI_STATES.HIDDEN || cell.uiState === UI_STATES.FLAGGED) {
+            countHidden++;
+          }
+        });
+
+        if (defaults.numMines === countHidden) {
+          win(cells);
+        } else {
+
+          if (cell.hasMine) {
+            cell.exploded = true;
+            cell.render();
+            lose(cells);
+          } else if (cell.surroundingMinesCount === 0) {
+
+
+            utils.getNeigbouringCellsArray(cell, rows).forEach(function (neighbourCell) {
+              if (neighbourCell) {
+                onMouseDown(1, neighbourCell);
+                onMouseUp(1, neighbourCell);
+              }
+            });
+          }
+        }
+        cell.render();
+      }
+      break;
+    case 2:
+      middleHitEnd(cell);
+      break;
+    case 3:
+      if (cell.uiState === UI_STATES.FLAGGED) {
+        cell.uiState = UI_STATES.HIDDEN;
+        cell.render();
+      } else if (cell.uiState === UI_STATES.HIDDEN) {
+        cell.uiState = UI_STATES.FLAGGED;
+        cell.render();
+      }
+      break;
+  }
+}
+
+function onMouseLeave(cell) {
+  if (!cell.clicksAllowed) return;
+  if (cell.uiState === UI_STATES.BEING_PRESSED) {
+    cell.uiState = UI_STATES.HIDDEN;
+    cell.render();
+  }
+}
+
 
 function render(rows) {
   rows.forEach(function (row) {
@@ -113,34 +202,19 @@ function render(rows) {
   });
 }
 
-function plantMines(rows, numMines) {
-  var plantedMineCells = [];
-  while (plantedMineCells.length < numMines) {
-    var randRow  = rows[utils.rand(0, rows.length - 1)];
-    var randCell = randRow[utils.rand(0, randRow.length - 1)];
-    if (plantedMineCells.indexOf(randCell) < 0) { //don't pick the same cell twice
-      plantedMineCells.push(randCell);
-      randCell.plantMine();
-    }
+function plantMines(numMines) {
+  var minesPlanted = 0;
+  var cellIndexes  = [];
+  cells.forEach(function (cell, index) {
+    cellIndexes.push(index);
+  });
+  while (minesPlanted < numMines) {
+    var randIndex     = Math.floor(Math.random() * cellIndexes.length);
+    var randCellIndex = cellIndexes.splice(randIndex, 1)[0];
+    cells[randCellIndex].plantMine();
+    minesPlanted++;
   }
 }
 
-function setupMineCountOnCells(rows) {
-  rows.forEach(function (row) {
-    row.forEach(function (cell) {
-      if (!cell.hasMine) {
-        cell.surroundingMinesCount = countSurroundingMines(cell, rows);
-      }
-    });
-  });
-}
-
-function countSurroundingMines(cell, rows) {
-  var minesNum = 0;
-  utils.getNeigbouringCellsArray(cell, rows).forEach(function (neighbourCell) {
-    neighbourCell && neighbourCell.hasMine && minesNum++;
-  });
-  return minesNum;
-}
 
 module.exports = Table;

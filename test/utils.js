@@ -3,15 +3,6 @@ var assert = require('assert'),
     Cell   = require('../src/js/cell');
 
 describe("Utility functions", function () {
-  describe("Random number", function () {
-    it("should return a number between (inclusive) 0 and 10 at least 1000 times", function () {
-      for (var i = 0; i < 1000; i++) {
-        var randNum = utils.rand(0, 10);
-        assert(randNum >= 0 && randNum < 10);
-      }
-    });
-  });
-
   describe('getting cells from 3x3 matrix', function () {
     var rows = [
       [new Cell(0, 0), new Cell(0, 1), new Cell(0, 2)],

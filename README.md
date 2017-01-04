@@ -1,5 +1,5 @@
 # minesweeper
-Minesweeper clone, written overnight
+Minesweeper clone
 
 ##Instructions
 First, install modules with `npm install`. 
