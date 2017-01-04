@@ -18,7 +18,6 @@ function Cell(rowNum, colNum) {
   this.surroundingMinesCount = 0;
   this.hasMine               = false;
   this.exploded              = false;
-  this.clicksAllowed         = true;
 }
 
 /**
@@ -40,10 +39,6 @@ Cell.prototype.render = function () {
 
 Cell.prototype.plantMine = function () {
   this.hasMine = true;
-};
-
-Cell.prototype.blockClicks = function () {
-  this.clicksAllowed = false;
 };
 
 Cell.prototype.cancelStateChange = function () {

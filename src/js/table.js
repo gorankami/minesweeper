@@ -1,7 +1,8 @@
-var $         = require("jquery"),
-    utils     = require("./utils"),
-    UI_STATES = require("./ui-states"),
-    Cell      = require("./cell");
+var $               = require("jquery"),
+    utils           = require("./utils"),
+    UI_STATES       = require("./ui-states"),
+    settingsService = require("./services/settings"),
+    Cell            = require("./cell");
 
 /**
  * Table component
@@ -10,18 +11,12 @@ var $         = require("jquery"),
  */
 function Table() {
 }
+
 var rows  = [];
 var cells = [];
 
-var defaults = {
-  width: 10, height: 10, numMines: 10
-};
-
-Table.prototype.init = function (tableElement, width, height, numMines) {
-  defaults.width    = width;
-  defaults.height   = height;
-  defaults.numMines = numMines;
-  createCells(width, height);
+Table.prototype.init = function (tableElement, size, numMines) {
+  createCells(size);
   populateElements(tableElement, rows);
   plantMines(numMines);
   utils.setupMineCountOnCells(cells, rows);
@@ -31,12 +26,12 @@ Table.prototype.render = function () {
   render(rows);
 };
 
-function createCells(maxRowNum, maxColNum) {
+function createCells(size) {
   rows  = [];
   cells = [];
-  for (var rowNum = 0; rowNum < maxRowNum; rowNum++) {
+  for (var rowNum = 0; rowNum < size; rowNum++) {
     var row = [];
-    for (var colNum = 0; colNum < maxColNum; colNum++) {
+    for (var colNum = 0; colNum < size; colNum++) {
       var cell = new Cell(rowNum, colNum);
       row.push(cell);
       cells.push(cell);
@@ -101,7 +96,7 @@ function setupCellEvents(cell) {
 
 
 function onMouseDown(mouseKey, cell) {
-  if (!cell.clicksAllowed) return;
+  if (!settingsService.clicksEnabled) return;
   cell.previousUiState = cell.uiState;
   switch (mouseKey) {
     case 1:
@@ -124,18 +119,18 @@ function onMouseDown(mouseKey, cell) {
 }
 
 function lose(cells) {
-  utils.blockClicks(cells);
+  settingsService.clicksEnabled = false;
   utils.uncoverAllMines(cells);
   $(".lose-message").show();
 }
 
-function win(cells) {
-  utils.blockClicks(cells);
+function win() {
+  settingsService.clicksEnabled = false;
   $(".win-message").show();
 }
 
 function onMouseUp(mouseKey, cell) {
-  if (!cell.clicksAllowed) return;
+  if (!settingsService.clicksEnabled) return;
   switch (mouseKey) {
     case 1:
       if (cell.uiState === UI_STATES.BEING_PRESSED) {
@@ -148,7 +143,7 @@ function onMouseUp(mouseKey, cell) {
           }
         });
 
-        if (defaults.numMines === countHidden) {
+        if (settingsService.minesCount === countHidden) {
           win(cells);
         } else {
 
@@ -157,8 +152,6 @@ function onMouseUp(mouseKey, cell) {
             cell.render();
             lose(cells);
           } else if (cell.surroundingMinesCount === 0) {
-
-
             utils.getNeigbouringCellsArray(cell, rows).forEach(function (neighbourCell) {
               if (neighbourCell) {
                 onMouseDown(1, neighbourCell);
@@ -186,7 +179,7 @@ function onMouseUp(mouseKey, cell) {
 }
 
 function onMouseLeave(cell) {
-  if (!cell.clicksAllowed) return;
+  if (!settingsService.clicksEnabled) return;
   if (cell.uiState === UI_STATES.BEING_PRESSED) {
     cell.uiState = UI_STATES.HIDDEN;
     cell.render();
@@ -215,6 +208,5 @@ function plantMines(numMines) {
     minesPlanted++;
   }
 }
-
 
 module.exports = Table;

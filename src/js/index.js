@@ -1,7 +1,10 @@
-var $           = require("jquery"),
-    iconService = require("./services/icon"),
-    Table       = require("./table");
+var $               = require("jquery"),
+    iconService     = require("./services/icon"),
+    settingsService = require("./services/settings"),
+    Table           = require("./table");
 
+$("input#grid-size").val(settingsService.size);
+$("input#num-mines").val(settingsService.minesCount);
 
 iconService.cacheIcons();
 
@@ -15,12 +18,14 @@ $("#btn-start").click(startGame);
 function startGame() {
   $(".win-message").hide();
   $(".lose-message").hide();
-  var gridSize = Number($("input#grid-size").val());
-  var numMines = Number($("input#num-mines").val());
-  if (numMines >= gridSize * gridSize) {
+  var size       = Number($("input#grid-size").val());
+  var minesCount = Number($("input#num-mines").val());
+
+  if (minesCount >= size * size) {
     alert("Are you insane? Pick less mines if you want to live!");
   } else {
-    table.init(tableElement, gridSize, gridSize, numMines);
+    settingsService.init(size, minesCount);
+    table.init(tableElement, size, minesCount);
     table.render();
   }
 }

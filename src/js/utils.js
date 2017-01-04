@@ -12,9 +12,7 @@ var utils = {
   getNeigbouringCellsArray: getNeigbouringCellsArray,
   countSurroundingMines   : countSurroundingMines,
   setupMineCountOnCells   : setupMineCountOnCells,
-  uncoverAllMines         : uncoverAllMines,
-  blockClicks             : blockClicks
-
+  uncoverAllMines         : uncoverAllMines
 };
 
 module.exports = utils;
@@ -87,11 +85,5 @@ function uncoverAllMines(cells) {
       cell.uiState = UI_STATES.UNCOVERED;
       cell.render();
     }
-  });
-}
-
-function blockClicks(cells) {
-  cells.forEach(function (cell) {
-    cell.blockClicks();
   });
 }
