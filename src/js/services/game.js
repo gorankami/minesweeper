@@ -3,20 +3,20 @@ var $               = require("jquery"),
     tableService    = require("./table");
 
 var gameService = {
-  init: init
+  start: start
 };
 
 module.exports = gameService;
 
-function init() {
+function start() {
   $("input#grid-size").val(settingsService.size);
   $("input#num-mines").val(settingsService.minesCount);
-  startGame();
+  initGame();
 }
 
-$("#btn-start").click(startGame);
+$("#btn-start").click(initGame);
 
-function startGame() {
+function initGame() {
   $(".win-message").hide();
   $(".lose-message").hide();
   var size       = Number($("input#grid-size").val());

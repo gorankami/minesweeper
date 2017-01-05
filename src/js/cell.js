@@ -32,7 +32,7 @@ Cell.prototype.getElement = function () {
 
 Cell.prototype.render = function () {
   var icon = iconService.getIconForCell(this);
-  $(this.cellElement).css('background-image', 'url(' + icon + ')');
+  $(this.getElement()).css('background-image', 'url(' + icon + ')');
 };
 
 
