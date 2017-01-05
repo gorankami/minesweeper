@@ -1,5 +1,4 @@
 var $           = require("jquery"),
-    utils       = require("./utils"),
     iconService = require("./services/icon"),
     UI_STATES   = require("./ui-states");
 

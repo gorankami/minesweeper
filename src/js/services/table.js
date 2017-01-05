@@ -1,16 +1,17 @@
-var $               = require("jquery"),
-    utils           = require("./../utils"),
-    UI_STATES       = require("./../ui-states"),
-    settingsService = require("./settings"),
-    Cell            = require("./../cell");
+var $                 = require("jquery"),
+    navigationService = require("./navigation"),
+    UI_STATES         = require("./../ui-states"),
+    settingsService   = require("./settings"),
+    Cell              = require("./../cell");
 
 
 var rows  = [];
 var cells = [];
 
 var tableService = {
-  init  : init,
-  render: render
+  init                 : init,
+  render               : render,
+  setupMineCountOnCells: setupMineCountOnCells
 };
 
 module.exports = tableService;
@@ -19,7 +20,16 @@ function init(tableElement, size, numMines) {
   createCells(size);
   populateElements(tableElement, rows);
   plantMines(numMines);
-  utils.setupMineCountOnCells(cells, rows);
+  setupMineCountOnCells(cells, rows);
+}
+
+
+function setupMineCountOnCells(cells, rows) {
+  cells.forEach(function (cell) {
+    if (!cell.hasMine) {
+      cell.surroundingMinesCount = navigationService.countSurroundingMines(cell, rows);
+    }
+  });
 }
 
 function createCells(size) {
@@ -37,13 +47,13 @@ function createCells(size) {
 }
 
 function middleHit(cell) {
-  utils.getNeigbouringCellsArray(cell, rows).forEach(function (neighbourCell) {
+  navigationService.getNeigbouringCellsArray(cell, rows).forEach(function (neighbourCell) {
     neighbourCell && onMouseDown(1, neighbourCell);
   });
 }
 
 function middleHitEnd(cell) {
-  var neighbours = utils.getNeigbouringCellsArray(cell, rows);
+  var neighbours = navigationService.getNeigbouringCellsArray(cell, rows);
   var flagged    = neighbours.filter(function (neighbourCell) {
     return neighbourCell && neighbourCell.uiState === UI_STATES.FLAGGED
   });
@@ -119,7 +129,12 @@ function onMouseDown(mouseKey, cell) {
 
 function lose(cells) {
   settingsService.clicksEnabled = false;
-  utils.uncoverAllMines(cells);
+  cells.forEach(function (cell) {
+    if (cell.hasMine) {
+      cell.uiState = UI_STATES.UNCOVERED;
+      cell.render();
+    }
+  });
   $(".lose-message").show();
 }
 
@@ -151,7 +166,7 @@ function onMouseUp(mouseKey, cell) {
             cell.render();
             lose(cells);
           } else if (cell.surroundingMinesCount === 0) {
-            utils.getNeigbouringCellsArray(cell, rows).forEach(function (neighbourCell) {
+            navigationService.getNeigbouringCellsArray(cell, rows).forEach(function (neighbourCell) {
               if (neighbourCell) {
                 onMouseDown(1, neighbourCell);
                 onMouseUp(1, neighbourCell);

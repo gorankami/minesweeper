@@ -1,6 +1,4 @@
-var UI_STATES = require('./ui-states');
-
-var utils = {
+var navigationService = {
   getCellUp               : getCellUp,
   getCellLeft             : getCellLeft,
   getCellRight            : getCellRight,
@@ -10,12 +8,10 @@ var utils = {
   getCellDownLeft         : getCellDownLeft,
   getCellDownRight        : getCellDownRight,
   getNeigbouringCellsArray: getNeigbouringCellsArray,
-  countSurroundingMines   : countSurroundingMines,
-  setupMineCountOnCells   : setupMineCountOnCells,
-  uncoverAllMines         : uncoverAllMines
+  countSurroundingMines   : countSurroundingMines
 };
 
-module.exports = utils;
+module.exports = navigationService;
 
 function getCellUp(pivotCell, rows) {
   return pivotCell.rowNum !== 0 ? rows[pivotCell.rowNum - 1][pivotCell.colNum] : null;
@@ -70,20 +66,3 @@ function countSurroundingMines(cell, rows) {
   return minesNum;
 }
 
-function setupMineCountOnCells(cells, rows) {
-  cells.forEach(function (cell) {
-    if (!cell.hasMine) {
-      cell.surroundingMinesCount = countSurroundingMines(cell, rows);
-    }
-  });
-}
-
-
-function uncoverAllMines(cells) {
-  cells.forEach(function (cell) {
-    if (cell.hasMine) {
-      cell.uiState = UI_STATES.UNCOVERED;
-      cell.render();
-    }
-  });
-}
