@@ -27,7 +27,7 @@ describe('Cell component', function () {
       var cell             = new Cell();
       cell.previousUiState = UI_STATES.HIDDEN;
       cell.uiState         = UI_STATES.UNCOVERED;
-      cell.cancelStateChange();
+      cell.revertState();
       assert.equal(cell.uiState, UI_STATES.HIDDEN);
     });
   });
@@ -49,6 +49,21 @@ function jsdomLoaded(err, window) {
 
     it('jquery works', function () {
       assert.equal($("#container").text(), 'test');
+    });
+
+    it('should create an element', function(){
+      var cell = new Cell();
+      assert.equal(cell.cellElement, null);
+      var newElement = cell.getElement($);
+      assert.equal(cell.cellElement, newElement);
+    });
+
+    it('should be return singleton for getElement', function(){
+      var cell = new Cell();
+      // assert.equal(cell.cellElement, null);
+      var element1 = cell.getElement($);
+      var element2 = cell.getElement($);
+      assert.equal(element1, element2);
     });
   });
 }

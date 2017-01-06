@@ -1,5 +1,4 @@
-var $                 = require("jquery"),
-    navigationService = require("./../services/navigation"),
+var navigationService = require("./../services/navigation"),
     Cell              = require("./cell");
 
 function Table() {
@@ -29,23 +28,23 @@ Table.prototype.getRows = function () {
 };
 
 
-Table.prototype.getElement = function () {
+Table.prototype.getElement = function ($) {
   if (!this.tableElement) {
     this.tableElement = $('<table></table>');
   }
   return this.tableElement;
 };
 
-Table.prototype.render = function () {
-  var tableElement = this.getElement();
+Table.prototype.render = function ($) {
+  var tableElement = this.getElement($);
   tableElement.empty();
 
   this.rows.forEach(function (row) {
     var rowElement = $('<tr></tr>');
     row.forEach(function (cell) {
       var td = $('<td></td>');
-      td.append(cell.getElement());
-      cell.render();
+      td.append(cell.getElement($));
+      cell.render($);
       rowElement.append(td);
     });
     tableElement.append(rowElement);

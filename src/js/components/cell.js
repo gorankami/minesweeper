@@ -1,5 +1,4 @@
-var $           = require("jquery"),
-    iconService = require("./../services/icon"),
+var iconService = require("./../services/icon"),
     UI_STATES   = require("./../enums/ui-states");
 
 /**
@@ -23,16 +22,16 @@ function Cell(rowNum, colNum) {
  * Singleton for cell element
  * @returns {jQuery|HTMLElement|*}
  */
-Cell.prototype.getElement = function () {
+Cell.prototype.getElement = function ($) {
   if (!this.cellElement) {
     this.cellElement = $('<div></div>');
   }
   return this.cellElement;
 };
 
-Cell.prototype.render = function () {
+Cell.prototype.render = function ($) {
   var icon    = iconService.getIconForCell(this);
-  var element = this.getElement();
+  var element = this.getElement($);
   $(element).css('background-image', 'url(' + icon + ')');
   return element;
 };
