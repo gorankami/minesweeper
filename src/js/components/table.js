@@ -1,4 +1,5 @@
 var navigationService = require("./../services/navigation"),
+    settingsService   = require("./../services/settings"),
     Cell              = require("./cell");
 
 function Table() {
@@ -7,26 +8,17 @@ function Table() {
 
 Table.prototype.init = function (size) {
   this.cells = [];
-  this.rows  = [];
   for (var rowNum = 0; rowNum < size; rowNum++) {
-    var row = [];
     for (var colNum = 0; colNum < size; colNum++) {
       var cell = new Cell(rowNum, colNum);
-      row.push(cell);
       this.cells.push(cell);
     }
-    this.rows.push(row);
   }
 };
 
 Table.prototype.getCells = function () {
   return this.cells;
 };
-
-Table.prototype.getRows = function () {
-  return this.rows;
-};
-
 
 Table.prototype.getElement = function ($) {
   if (!this.tableElement) {
@@ -39,16 +31,17 @@ Table.prototype.render = function ($) {
   var tableElement = this.getElement($);
   tableElement.empty();
 
-  this.rows.forEach(function (row) {
+  for (var i = 0; i < settingsService.size; i++) {
     var rowElement = $('<tr></tr>');
-    row.forEach(function (cell) {
+    for (var j = 0; j < settingsService.size; j++) {
+      var cell = this.getCells()[i*settingsService.size + j];
       var td = $('<td></td>');
       td.append(cell.getElement($));
       cell.render($);
       rowElement.append(td);
-    });
+    }
     tableElement.append(rowElement);
-  });
+  }
   return tableElement;
 };
 
@@ -57,7 +50,7 @@ Table.prototype.plantMines = function (numMines, avoidanceCell) {
   var safeCellIndexes    = [];
   var avoidanceCellindex = -1;
   this.cells.forEach(function (cell, index) {
-    if(cell === avoidanceCell){
+    if (cell === avoidanceCell) {
       avoidanceCellindex = index;
     } else {
       safeCellIndexes.push(index);
@@ -74,9 +67,8 @@ Table.prototype.plantMines = function (numMines, avoidanceCell) {
 
   //closure reach
   var cells = this.cells;
-  var rows = this.rows;
   safeCellIndexes.forEach(function (cellIndex) {
-    cells[cellIndex].surroundingMinesCount = navigationService.countSurroundingMines(cells[cellIndex], rows);
+    cells[cellIndex].surroundingMinesCount = navigationService.countSurroundingMines(cells[cellIndex], cells, settingsService.size);
   });
 };
 

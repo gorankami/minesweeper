@@ -13,54 +13,54 @@ var navigationService = {
 
 module.exports = navigationService;
 
-function getCellUp(pivotCell, rows) {
-  return pivotCell.rowNum !== 0 ? rows[pivotCell.rowNum - 1][pivotCell.colNum] : null;
+function getCellUp(pivotCell, cells, boardSize) {
+  return pivotCell.rowNum !== 0 ? cells[((pivotCell.rowNum - 1) * boardSize) + pivotCell.colNum] : null;
 }
 
-function getCellLeft(pivotCell, rows) {
-  return pivotCell.colNum !== 0 ? rows[pivotCell.rowNum][pivotCell.colNum - 1] : null;
+function getCellLeft(pivotCell, cells, boardSize) {
+  return pivotCell.colNum !== 0 ? cells[(pivotCell.rowNum * boardSize) + pivotCell.colNum - 1] : null;
 }
 
-function getCellRight(pivotCell, rows) {
-  return pivotCell.colNum < rows[0].length - 1 ? rows[pivotCell.rowNum][pivotCell.colNum + 1] : null;
+function getCellRight(pivotCell, cells, boardSize) {
+  return pivotCell.colNum < boardSize - 1 ? cells[(pivotCell.rowNum * boardSize) + pivotCell.colNum + 1] : null;
 }
 
-function getCellDown(pivotCell, rows) {
-  return pivotCell.rowNum < rows.length - 1 ? rows[pivotCell.rowNum + 1][pivotCell.colNum] : null;
+function getCellDown(pivotCell, cells, boardSize) {
+  return pivotCell.rowNum < boardSize - 1 ? cells[((pivotCell.rowNum + 1) * boardSize) + pivotCell.colNum] : null;
 }
 
-function getCellUpLeft(pivotCell, rows) {
-  return pivotCell.rowNum !== 0 && pivotCell.colNum !== 0 ? rows[pivotCell.rowNum - 1][pivotCell.colNum - 1] : null;
+function getCellUpLeft(pivotCell, cells, boardSize) {
+  return pivotCell.rowNum !== 0 && pivotCell.colNum !== 0 ? cells[((pivotCell.rowNum - 1) * boardSize) + pivotCell.colNum - 1] : null;
 }
 
-function getCellUpRight(pivotCell, rows) {
-  return pivotCell.rowNum !== 0 && pivotCell.colNum < rows[0].length - 1 ? rows[pivotCell.rowNum - 1][pivotCell.colNum + 1] : null;
+function getCellUpRight(pivotCell, cells, boardSize) {
+  return pivotCell.rowNum !== 0 && pivotCell.colNum < boardSize - 1 ? cells[((pivotCell.rowNum - 1) * boardSize) + pivotCell.colNum + 1] : null;
 }
 
-function getCellDownLeft(pivotCell, rows) {
-  return pivotCell.rowNum < rows.length - 1 && pivotCell.colNum !== 0 ? rows[pivotCell.rowNum + 1][pivotCell.colNum - 1] : null;
+function getCellDownLeft(pivotCell, cells, boardSize) {
+  return pivotCell.rowNum < boardSize - 1 && pivotCell.colNum !== 0 ? cells[((pivotCell.rowNum + 1) * boardSize) + pivotCell.colNum - 1] : null;
 }
 
-function getCellDownRight(pivotCell, rows) {
-  return pivotCell.rowNum < rows.length - 1 && pivotCell.colNum < rows[0].length - 1 ? rows[pivotCell.rowNum + 1][pivotCell.colNum + 1] : null;
+function getCellDownRight(pivotCell, cells, boardSize) {
+  return pivotCell.rowNum < boardSize - 1 && pivotCell.colNum < boardSize - 1 ? cells[((pivotCell.rowNum + 1) * boardSize) + pivotCell.colNum + 1]  : null;
 }
 
-function getNeigbouringCellsArray(cell, rows) {
+function getNeigbouringCellsArray(cell, cells, boardSize) {
   return [
-    getCellUpLeft(cell, rows),
-    getCellUp(cell, rows),
-    getCellUpRight(cell, rows),
-    getCellLeft(cell, rows),
-    getCellRight(cell, rows),
-    getCellDownLeft(cell, rows),
-    getCellDown(cell, rows),
-    getCellDownRight(cell, rows)
+    getCellUpLeft(cell, cells, boardSize),
+    getCellUp(cell, cells, boardSize),
+    getCellUpRight(cell, cells, boardSize),
+    getCellLeft(cell, cells, boardSize),
+    getCellRight(cell, cells, boardSize),
+    getCellDownLeft(cell, cells, boardSize),
+    getCellDown(cell, cells, boardSize),
+    getCellDownRight(cell, cells, boardSize)
   ];
 }
 
-function countSurroundingMines(cell, rows) {
+function countSurroundingMines(cell, cells, boardSize) {
   var minesNum = 0;
-  getNeigbouringCellsArray(cell, rows).forEach(function (neighbourCell) {
+  getNeigbouringCellsArray(cell, cells, boardSize).forEach(function (neighbourCell) {
     neighbourCell && neighbourCell.hasMine && minesNum++;
   });
   return minesNum;

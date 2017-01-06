@@ -14,7 +14,7 @@ var fieldGridSize  = $("input#grid-size"),
     tableContainer = $('#table-container');
 
 //Initialization
-var table = new Table();
+var table        = new Table();
 var isFirstClick = false;
 iconService.cacheIcons();
 fieldGridSize.val(settingsService.size);
@@ -55,7 +55,7 @@ function setupCellEvents(cells) {
         case 1:
           //left click down
           //planting mines only on first click in the game, this prevents that the first hit is a mine
-          if(isFirstClick){
+          if (isFirstClick) {
             table.plantMines(settingsService.minesCount, cell);
             isFirstClick = false;
           }
@@ -108,7 +108,7 @@ function middleClickDown(cell) {
 }
 
 function chainPeek(cell, alsoUncover) {
-  navigationService.getNeigbouringCellsArray(cell, table.getRows()).forEach(function (neighbourCell) {
+  navigationService.getNeigbouringCellsArray(cell, table.getCells(), settingsService.size).forEach(function (neighbourCell) {
     if (neighbourCell && settingsService.clicksEnabled) {
       neighbourCell.tryPeek();
       neighbourCell.render($);
@@ -121,16 +121,13 @@ function chainPeek(cell, alsoUncover) {
 
 function leftClickUp(cell) {
   if (cell.tryUncover()) {
-    if (hasWon(table.getCells())) {
+    if (cell.hasMine) {
+      cell.explode();
+      lose(table.getCells());
+    } else if (hasWon(table.getCells())) {
       win(table.getCells());
-    } else {
-
-      if (cell.hasMine) {
-        cell.explode();
-        lose(table.getCells());
-      } else if (cell.surroundingMinesCount === 0) {
-        chainPeek(cell, true);
-      }
+    } else if (cell.surroundingMinesCount === 0) {
+      chainPeek(cell, true);
     }
     cell.render($);
   }
@@ -151,7 +148,7 @@ function hasWon(cells) {
 }
 
 function middleClickUp(cell) {
-  var neighbours = navigationService.getNeigbouringCellsArray(cell, table.getRows());
+  var neighbours = navigationService.getNeigbouringCellsArray(cell, table.getCells(), settingsService.size);
   var flagged    = neighbours.filter(function (neighbourCell) {
     return neighbourCell && neighbourCell.uiState === UI_STATES.FLAGGED;
   });
