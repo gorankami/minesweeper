@@ -27,11 +27,11 @@ h2 {
 
 table {
     border-collapse: collapse;
-    margin-top: 50px;
+    margin-top: 20px;
 }
 
 div.game-panel {
-    width: 283px;
+    width: 300px;
 }
 
 td, td > div {

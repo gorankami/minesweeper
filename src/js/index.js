@@ -29,9 +29,12 @@ function newGame() {
   msgLose.hide();
   var size       = Number(fieldGridSize.val());
   var minesCount = Number(fieldNumMines.val());
-
-  if (minesCount >= size * size) {
-    alert("Are you insane? Pick less mines if you want to live!");
+  if (size < 10 || size > 40) {
+    alert("Pick a size between 10 and 40.");
+  } else if (minesCount < 10 || minesCount > 500) {
+    alert("You can plant up to 500 mines, but not less than 10.");
+  } else if (minesCount >= size * size) {
+    alert("That amount of mines doesn't fit the board size. Pick less mines, or create a bigger board");
   } else {
     settingsService.init(size, minesCount);
     table.init(size, minesCount);
@@ -102,7 +105,7 @@ function chainPeek(cell, alsoUncover) {
     if (neighbourCell && settingsService.clicksEnabled) {
       neighbourCell.tryPeek();
       neighbourCell.render();
-      if(alsoUncover){
+      if (alsoUncover) {
         leftClickUp(neighbourCell);
       }
     }
@@ -110,7 +113,7 @@ function chainPeek(cell, alsoUncover) {
 }
 
 function leftClickUp(cell) {
-  if(cell.tryUncover()){
+  if (cell.tryUncover()) {
     if (hasWon(table.getCells())) {
       win(table.getCells());
     } else {
