@@ -5,7 +5,6 @@ var $                 = require("jquery"),
     UI_STATES         = require("./enums/ui-states"),
     Table             = require("./components/table");
 
-
 //DOM Elements
 var fieldGridSize  = $("input#grid-size"),
     fieldNumMines  = $("input#num-mines"),
@@ -46,141 +45,141 @@ function newGame() {
 function setupCellEvents(cells) {
   cells.forEach(function (cell) {
     $(cell.getElement()).mousedown(function (event) {
-      onMouseDown(event.which, cell);
+      if (!settingsService.clicksEnabled) return;
+      switch (event.which) {
+        case 1:
+          //left click down
+          cell.tryPeek();
+          cell.render();
+          break;
+        case 2:
+          //middle click down
+          middleClickDown(cell);
+          break;
+      }
     });
     $(cell.getElement()).mouseup(function (event) {
-      onMouseUp(event.which, cell);
+      if (!settingsService.clicksEnabled) return;
+      switch (event.which) {
+        case 1:
+          leftClickUp(cell);
+          break;
+        case 2:
+          middleClickUp(cell);
+          break;
+        case 3:
+          //right click up
+          cell.toggleFlag();
+          cell.render();
+          break;
+      }
     });
     $(cell.getElement()).mouseleave(function () {
-      onMouseLeave(cells);
+      if (!settingsService.clicksEnabled) return;
+      cells.forEach(function (cell) {
+        if (cell.uiState === UI_STATES.BEING_PRESSED) {
+          cell.changeState(UI_STATES.HIDDEN);
+          cell.render();
+        }
+      });
     });
   });
 }
 
-
-function onMouseDown(mouseKey, cell) {
-  if (!settingsService.clicksEnabled) return;
-  cell.previousUiState = cell.uiState;
-  switch (mouseKey) {
-    case 1:
-      if (cell.uiState === UI_STATES.HIDDEN) {
-        cell.uiState = UI_STATES.BEING_PRESSED;
-        cell.render();
-      }
-      break;
-    case 2:
-      if (cell.uiState === UI_STATES.HIDDEN) {
-        cell.uiState = UI_STATES.BEING_PRESSED;
-        cell.render();
-        middleHit(cell);
-      } else if (cell.uiState === UI_STATES.UNCOVERED) {
-        cell.render();
-        middleHit(cell);
-      }
-      break;
+function middleClickDown(cell) {
+  if (cell.uiState === UI_STATES.HIDDEN) {
+    cell.changeState(UI_STATES.BEING_PRESSED);
+    cell.render();
+    chainPeek(cell);
+  } else if (cell.uiState === UI_STATES.UNCOVERED) {
+    cell.render();
+    chainPeek(cell);
   }
 }
+
+function chainPeek(cell, alsoUncover) {
+  navigationService.getNeigbouringCellsArray(cell, table.getRows()).forEach(function (neighbourCell) {
+    if (neighbourCell && settingsService.clicksEnabled) {
+      neighbourCell.tryPeek();
+      neighbourCell.render();
+      if(alsoUncover){
+        leftClickUp(neighbourCell);
+      }
+    }
+  });
+}
+
+function leftClickUp(cell) {
+  if(cell.tryUncover()){
+    if (hasWon(table.getCells())) {
+      win(table.getCells());
+    } else {
+
+      if (cell.hasMine) {
+        cell.explode();
+        lose(table.getCells());
+      } else if (cell.surroundingMinesCount === 0) {
+        chainPeek(cell, true);
+      }
+    }
+    cell.render();
+  }
+  if (cell.uiState === UI_STATES.BEING_PRESSED) {
+    cell.changeState(UI_STATES.UNCOVERED);
+  }
+}
+
+function hasWon(cells) {
+  var countHidden = 0;
+  cells.forEach(function (cell) {
+    if (cell.uiState === UI_STATES.HIDDEN || cell.uiState === UI_STATES.FLAGGED) {
+      countHidden++;
+    }
+  });
+
+  return settingsService.minesCount === countHidden;
+}
+
+function middleClickUp(cell) {
+  var neighbours = navigationService.getNeigbouringCellsArray(cell, table.getRows());
+  var flagged    = neighbours.filter(function (neighbourCell) {
+    return neighbourCell && neighbourCell.uiState === UI_STATES.FLAGGED;
+  });
+  if (!cell.hasMine && flagged.length === cell.surroundingMinesCount && cell.uiState === UI_STATES.UNCOVERED) {
+    neighbours.forEach(function (neighbourCell) {
+      if (neighbourCell && neighbourCell.uiState !== UI_STATES.FLAGGED && settingsService.clicksEnabled) {
+        neighbourCell.tryPeek();
+        neighbourCell.render();
+        leftClickUp(neighbourCell);
+      }
+    });
+  } else {
+    if (cell.uiState === UI_STATES.BEING_PRESSED) {
+      cell.revertState();
+      cell.render();
+    }
+    neighbours.forEach(function (neighbourCell) {
+      if (neighbourCell && neighbourCell.uiState === UI_STATES.BEING_PRESSED) {
+        neighbourCell.revertState();
+        neighbourCell.render();
+      }
+    });
+  }
+}
+
 
 function lose(cells) {
   settingsService.clicksEnabled = false;
   cells.forEach(function (cell) {
     if (cell.hasMine) {
-      cell.uiState = UI_STATES.UNCOVERED;
+      cell.changeState(UI_STATES.UNCOVERED);
       cell.render();
     }
   });
-  $(".lose-message").show();
+  msgLose.show();
 }
 
 function win() {
   settingsService.clicksEnabled = false;
-  $(".win-message").show();
-}
-
-function onMouseUp(mouseKey, cell) {
-  if (!settingsService.clicksEnabled) return;
-  switch (mouseKey) {
-    case 1:
-      if (cell.uiState === UI_STATES.BEING_PRESSED) {
-        cell.uiState    = UI_STATES.UNCOVERED;
-        //check if game ended
-        var countHidden = 0;
-        table.getCells().forEach(function (cell) {
-          if (cell.uiState === UI_STATES.HIDDEN || cell.uiState === UI_STATES.FLAGGED) {
-            countHidden++;
-          }
-        });
-
-        if (settingsService.minesCount === countHidden) {
-          win(table.getCells());
-        } else {
-
-          if (cell.hasMine) {
-            cell.exploded = true;
-            cell.render();
-            lose(table.getCells());
-          } else if (cell.surroundingMinesCount === 0) {
-            navigationService.getNeigbouringCellsArray(cell, table.getRows()).forEach(function (neighbourCell) {
-              if (neighbourCell) {
-                onMouseDown(1, neighbourCell);
-                onMouseUp(1, neighbourCell);
-              }
-            });
-          }
-        }
-        cell.render();
-      }
-      break;
-    case 2:
-      middleHitEnd(cell);
-      break;
-    case 3:
-      if (cell.uiState === UI_STATES.FLAGGED) {
-        cell.uiState = UI_STATES.HIDDEN;
-        cell.render();
-      } else if (cell.uiState === UI_STATES.HIDDEN) {
-        cell.uiState = UI_STATES.FLAGGED;
-        cell.render();
-      }
-      break;
-  }
-}
-
-function onMouseLeave(cells) {
-  if (!settingsService.clicksEnabled) return;
-  cells.forEach(function (cell) {
-    if (cell.uiState === UI_STATES.BEING_PRESSED) {
-      cell.uiState = UI_STATES.HIDDEN;
-      cell.render();
-    }
-  });
-}
-
-
-function middleHit(cell) {
-  navigationService.getNeigbouringCellsArray(cell, table.getRows()).forEach(function (neighbourCell) {
-    neighbourCell && onMouseDown(1, neighbourCell);
-  });
-}
-
-function middleHitEnd(cell) {
-  var neighbours = navigationService.getNeigbouringCellsArray(cell, table.getRows());
-  var flagged    = neighbours.filter(function (neighbourCell) {
-    return neighbourCell && neighbourCell.uiState === UI_STATES.FLAGGED
-  });
-  if (!cell.hasMine && flagged.length === cell.surroundingMinesCount) {
-    neighbours.forEach(function (neighbourCell) {
-      if (neighbourCell && neighbourCell.uiState !== UI_STATES.FLAGGED) {
-        onMouseDown(1, neighbourCell);
-        onMouseUp(1, neighbourCell);
-      }
-    });
-  } else {
-    neighbours.forEach(function (neighbourCell) {
-      if (neighbourCell) {
-        neighbourCell.cancelStateChange();
-        neighbourCell.render();
-      }
-    });
-  }
+  msgWin.show();
 }

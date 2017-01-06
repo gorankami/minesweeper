@@ -31,7 +31,7 @@ Cell.prototype.getElement = function () {
 };
 
 Cell.prototype.render = function () {
-  var icon = iconService.getIconForCell(this);
+  var icon    = iconService.getIconForCell(this);
   var element = this.getElement();
   $(element).css('background-image', 'url(' + icon + ')');
   return element;
@@ -42,8 +42,43 @@ Cell.prototype.plantMine = function () {
   this.hasMine = true;
 };
 
-Cell.prototype.cancelStateChange = function () {
+Cell.prototype.revertState = function () {
   this.uiState = this.previousUiState;
+};
+
+Cell.prototype.changeState = function (newState) {
+  this.previousUiState = this.uiState;
+  this.uiState         = newState;
+};
+
+Cell.prototype.tryPeek = function () {
+  if (this.uiState === UI_STATES.HIDDEN) {
+    this.changeState(UI_STATES.BEING_PRESSED);
+    return true;
+  } else {
+    return false;
+  }
+};
+
+Cell.prototype.toggleFlag = function () {
+  if (this.uiState === UI_STATES.FLAGGED) {
+    this.changeState(UI_STATES.HIDDEN);
+  } else if (this.uiState === UI_STATES.HIDDEN) {
+    this.changeState(UI_STATES.FLAGGED);
+  }
+};
+
+Cell.prototype.tryUncover = function () {
+  if (this.uiState === UI_STATES.BEING_PRESSED) {
+    this.changeState(UI_STATES.UNCOVERED);
+    return true;
+  } else {
+    return false;
+  }
+};
+
+Cell.prototype.explode = function () {
+  this.exploded = true;
 };
 
 module.exports = Cell;
