@@ -15,6 +15,7 @@ var fieldGridSize  = $("input#grid-size"),
 
 //Initialization
 var table = new Table();
+var isFirstClick = false;
 iconService.cacheIcons();
 fieldGridSize.val(settingsService.size);
 fieldNumMines.val(settingsService.minesCount);
@@ -46,12 +47,18 @@ function newGame() {
 }
 
 function setupCellEvents(cells) {
+  isFirstClick = true;
   cells.forEach(function (cell) {
     $(cell.getElement()).mousedown(function (event) {
       if (!settingsService.clicksEnabled) return;
       switch (event.which) {
         case 1:
           //left click down
+          //planting mines only on first click in the game, this prevents that the first hit is a mine
+          if(isFirstClick){
+            table.plantMines(settingsService.minesCount, cell);
+            isFirstClick = false;
+          }
           cell.tryPeek();
           cell.render();
           break;

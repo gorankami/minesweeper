@@ -6,7 +6,7 @@ function Table() {
   this.tableElement = null;
 }
 
-Table.prototype.init = function (size, numMines) {
+Table.prototype.init = function (size) {
   this.cells = [];
   this.rows  = [];
   for (var rowNum = 0; rowNum < size; rowNum++) {
@@ -18,7 +18,6 @@ Table.prototype.init = function (size, numMines) {
     }
     this.rows.push(row);
   }
-  plantMines(numMines, this.cells, this.rows);
 };
 
 Table.prototype.getCells = function () {
@@ -54,25 +53,36 @@ Table.prototype.render = function () {
   return tableElement;
 };
 
-module.exports = Table;
-
-function plantMines(numMines, cells, rows) {
-  var minesPlanted    = 0;
-  var safeCellIndexes = [];
-  cells.forEach(function (cell, index) {
-    safeCellIndexes.push(index);
+Table.prototype.plantMines = function (numMines, avoidanceCell) {
+  var minesPlanted       = 0;
+  var safeCellIndexes    = [];
+  var avoidanceCellindex = -1;
+  this.cells.forEach(function (cell, index) {
+    if(cell === avoidanceCell){
+      avoidanceCellindex = index;
+    } else {
+      safeCellIndexes.push(index);
+    }
   });
   while (minesPlanted < numMines) {
     var randIndex     = Math.floor(Math.random() * safeCellIndexes.length);
     var randCellIndex = safeCellIndexes.splice(randIndex, 1)[0];
-    cells[randCellIndex].plantMine();
+    this.cells[randCellIndex].plantMine();
     minesPlanted++;
   }
   //calculate mine count
+  safeCellIndexes.push(avoidanceCellindex);
+
+  //closure reach
+  var cells = this.cells;
+  var rows = this.rows;
   safeCellIndexes.forEach(function (cellIndex) {
     cells[cellIndex].surroundingMinesCount = navigationService.countSurroundingMines(cells[cellIndex], rows);
   });
-}
+};
+
+module.exports = Table;
+
 
 
 
