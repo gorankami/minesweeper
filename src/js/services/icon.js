@@ -1,4 +1,4 @@
-var UI_STATES = require("./../ui-states");
+var UI_STATES = require("./../enums/ui-states");
 
 var iconService = {
   cacheIcons    : cacheIcons,

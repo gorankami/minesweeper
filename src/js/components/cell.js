@@ -1,6 +1,6 @@
 var $           = require("jquery"),
-    iconService = require("./services/icon"),
-    UI_STATES   = require("./ui-states");
+    iconService = require("./../services/icon"),
+    UI_STATES   = require("./../enums/ui-states");
 
 /**
  * Cell component
@@ -25,14 +25,16 @@ function Cell(rowNum, colNum) {
  */
 Cell.prototype.getElement = function () {
   if (!this.cellElement) {
-    this.cellElement = $('<div/></div>');
+    this.cellElement = $('<div></div>');
   }
   return this.cellElement;
 };
 
 Cell.prototype.render = function () {
   var icon = iconService.getIconForCell(this);
-  $(this.getElement()).css('background-image', 'url(' + icon + ')');
+  var element = this.getElement();
+  $(element).css('background-image', 'url(' + icon + ')');
+  return element;
 };
 
 

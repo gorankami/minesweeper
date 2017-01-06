@@ -1,6 +1,6 @@
 var assert            = require('assert'),
     navigationService = require('../src/js/services/navigation'),
-    Cell              = require('../src/js/cell');
+    Cell              = require('../src/js/components/cell');
 
 describe("Utility functions", function () {
 

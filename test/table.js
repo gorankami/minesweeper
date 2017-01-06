@@ -1,6 +1,5 @@
 var assert            = require('assert'),
-    Cell              = require('../src/js/cell'),
-    tableService      = require("../src/js/services/table"),
+    Cell              = require('../src/js/components/cell'),
     navigationService = require('../src/js/services/navigation');
 
 describe("Table functions", function () {
@@ -19,7 +18,11 @@ describe("Table functions", function () {
     ];
     rows[0][0].plantMine();
     rows[1][0].plantMine();
-    tableService.setupMineCountOnCells(cells, rows);
+    cells.forEach(function (cell) {
+      if (!cell.hasMine) {
+        cell.surroundingMinesCount = navigationService.countSurroundingMines(cell, rows);
+      }
+    });
     it('Cell 0,0 should be a mine', function () {
       assert(rows[0][0].hasMine);
     });
