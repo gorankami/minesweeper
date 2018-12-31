@@ -4,7 +4,7 @@
   "description": "Minesweeper clone",
   "main": "index.html",
   "scripts": {
-    "start": "rm -rf build && mkdir build && cp -t build src/*.html src/*.css && ./node_modules/.bin/webpack src/js build/app.js",
+    "start": "rm -rf build && mkdir build && cp -t build src/*.css && ./node_modules/.bin/webpack src/js build/app.js",
     "test": "./node_modules/.bin/mocha --reporter spec"
   },
   "repository": {
@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "jsdom": "^9.9.1",
-    "mocha": "^3.2.0",
+    "mocha": "^5.2.0",
     "webpack": "^1.14.0"
   }
 }
