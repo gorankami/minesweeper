@@ -46,6 +46,8 @@ td div {
     margin-right: auto;
     left: 0;
     right: 0;
+    font-size: 64px;
+    margin-top: 20px;
     z-index: 2;
     background-color: rgba(0, 0, 0, 0.5);
     /* Disable selection highlightning: */
