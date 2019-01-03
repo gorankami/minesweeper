@@ -12,6 +12,7 @@ module.exports = settingsService;
 function init(difficulty) {
   setSettingsByDifficulty(difficulty);
   settingsService.clicksEnabled = true;
+  settingsService.flagsCount = 0;
 }
 
 function setSettingsByDifficulty(difficulty) {

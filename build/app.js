@@ -88,6 +88,12 @@
 	  };
 	  msgWin.css(newCss);
 	  msgLose.css(newCss);
+	  refreshFlagCount();
+	}
+
+	function refreshFlagCount() {
+	  $("#flag-count").empty();
+	  $("#flag-count").append(settingsService.minesCount - settingsService.flagsCount);
 	}
 
 	function setupCellEvents(cells) {
@@ -125,6 +131,7 @@
 	          //right click up
 	          cell.toggleFlag();
 	          cell.render($);
+	          refreshFlagCount();
 	          break;
 	      }
 	    });
@@ -10708,6 +10715,7 @@
 	function init(difficulty) {
 	  setSettingsByDifficulty(difficulty);
 	  settingsService.clicksEnabled = true;
+	  settingsService.flagsCount = 0;
 	}
 
 	function setSettingsByDifficulty(difficulty) {
@@ -10892,9 +10900,9 @@
 /* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	var iconService = __webpack_require__(2),
-	    UI_STATES   = __webpack_require__(3);
-
+	var settingsService = __webpack_require__(4),
+	  iconService = __webpack_require__(2),
+	  UI_STATES = __webpack_require__(3);
 	/**
 	 * Cell component
 	 * Initialized with coordinates, cell component encapsulates cell state, allows click events and keeps mine data
@@ -10903,13 +10911,13 @@
 	 * @constructor
 	 */
 	function Cell(rowNum, colNum) {
-	  this.rowNum                = rowNum;
-	  this.colNum                = colNum;
-	  this.uiState               = UI_STATES.HIDDEN;
-	  this.previousUiState       = UI_STATES.HIDDEN;
+	  this.rowNum = rowNum;
+	  this.colNum = colNum;
+	  this.uiState = UI_STATES.HIDDEN;
+	  this.previousUiState = UI_STATES.HIDDEN;
 	  this.surroundingMinesCount = 0;
-	  this.hasMine               = false;
-	  this.exploded              = false;
+	  this.hasMine = false;
+	  this.exploded = false;
 	}
 
 	/**
@@ -10924,7 +10932,7 @@
 	};
 
 	Cell.prototype.render = function ($) {
-	  var icon    = iconService.getIconForCell(this);
+	  var icon = iconService.getIconForCell(this);
 	  var element = this.getElement($);
 	  $(element).css('background-image', 'url(' + icon + ')');
 	  return element;
@@ -10941,7 +10949,7 @@
 
 	Cell.prototype.changeState = function (newState) {
 	  this.previousUiState = this.uiState;
-	  this.uiState         = newState;
+	  this.uiState = newState;
 	};
 
 	Cell.prototype.tryPeek = function () {
@@ -10956,8 +10964,10 @@
 	Cell.prototype.toggleFlag = function () {
 	  if (this.uiState === UI_STATES.FLAGGED) {
 	    this.changeState(UI_STATES.HIDDEN);
+	    settingsService.flagsCount--;
 	  } else if (this.uiState === UI_STATES.HIDDEN) {
 	    this.changeState(UI_STATES.FLAGGED);
+	    settingsService.flagsCount++;
 	  }
 	};
 
@@ -10975,10 +10985,6 @@
 	};
 
 	module.exports = Cell;
-
-
-
-
 
 /***/ })
 /******/ ]);

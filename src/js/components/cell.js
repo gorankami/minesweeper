@@ -1,6 +1,6 @@
-var iconService = require("./../services/icon"),
-    UI_STATES   = require("./../enums/ui-states");
-
+var settingsService = require("./../services/settings"),
+  iconService = require("./../services/icon"),
+  UI_STATES = require("./../enums/ui-states");
 /**
  * Cell component
  * Initialized with coordinates, cell component encapsulates cell state, allows click events and keeps mine data
@@ -9,13 +9,13 @@ var iconService = require("./../services/icon"),
  * @constructor
  */
 function Cell(rowNum, colNum) {
-  this.rowNum                = rowNum;
-  this.colNum                = colNum;
-  this.uiState               = UI_STATES.HIDDEN;
-  this.previousUiState       = UI_STATES.HIDDEN;
+  this.rowNum = rowNum;
+  this.colNum = colNum;
+  this.uiState = UI_STATES.HIDDEN;
+  this.previousUiState = UI_STATES.HIDDEN;
   this.surroundingMinesCount = 0;
-  this.hasMine               = false;
-  this.exploded              = false;
+  this.hasMine = false;
+  this.exploded = false;
 }
 
 /**
@@ -30,7 +30,7 @@ Cell.prototype.getElement = function ($) {
 };
 
 Cell.prototype.render = function ($) {
-  var icon    = iconService.getIconForCell(this);
+  var icon = iconService.getIconForCell(this);
   var element = this.getElement($);
   $(element).css('background-image', 'url(' + icon + ')');
   return element;
@@ -47,7 +47,7 @@ Cell.prototype.revertState = function () {
 
 Cell.prototype.changeState = function (newState) {
   this.previousUiState = this.uiState;
-  this.uiState         = newState;
+  this.uiState = newState;
 };
 
 Cell.prototype.tryPeek = function () {
@@ -62,8 +62,10 @@ Cell.prototype.tryPeek = function () {
 Cell.prototype.toggleFlag = function () {
   if (this.uiState === UI_STATES.FLAGGED) {
     this.changeState(UI_STATES.HIDDEN);
+    settingsService.flagsCount--;
   } else if (this.uiState === UI_STATES.HIDDEN) {
     this.changeState(UI_STATES.FLAGGED);
+    settingsService.flagsCount++;
   }
 };
 
@@ -81,6 +83,3 @@ Cell.prototype.explode = function () {
 };
 
 module.exports = Cell;
-
-
-

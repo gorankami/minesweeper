@@ -42,6 +42,12 @@ function newGame(difficulty) {
   };
   msgWin.css(newCss);
   msgLose.css(newCss);
+  refreshFlagCount();
+}
+
+function refreshFlagCount() {
+  $("#flag-count").empty();
+  $("#flag-count").append(settingsService.minesCount - settingsService.flagsCount);
 }
 
 function setupCellEvents(cells) {
@@ -79,6 +85,7 @@ function setupCellEvents(cells) {
           //right click up
           cell.toggleFlag();
           cell.render($);
+          refreshFlagCount();
           break;
       }
     });
