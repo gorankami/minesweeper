@@ -1,7 +1,7 @@
 # minesweeper
-Minesweeper clone
+Minesweeper clone. Demo is available here https://gorankami.github.io/minesweeper/
 
-##Instructions
+## Instructions
 First, install modules with `npm install`. 
 
 Build the app with `npm start`. That will create `build/index.html` that you can launch in any browser 
