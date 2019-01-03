@@ -1,24 +1,21 @@
-td, tr, td div, body {
+td,
+tr,
+td div,
+body {
     padding: 0px;
     margin: 0px;
     border: none;
+
 }
 
 body {
+    text-align: center;
     background-color: darkslategray;
 }
 
-.game-panel-container {
-    background-color: lightblue;
-    width: 100%;
-    padding-top: 15px;
-    padding-bottom: 10px;
-}
 
-h2, table, div.game-panel {
-    margin-left: auto;
-    margin-right: auto;
-}
+h2,
+table,
 
 h2 {
     color: white;
@@ -30,11 +27,9 @@ table {
     margin-top: 20px;
 }
 
-div.game-panel {
-    width: 300px;
-}
 
-td, td > div {
+td,
+td>div {
     width: 16px;
     max-width: 16px;
     height: 16px;
@@ -43,6 +38,30 @@ td, td > div {
 
 td div {
     background-size: 16px 16px;
+}
+
+.message {
+    position: absolute;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Disable selection highlightning: */
+    -webkit-touch-callout: none;
+    /* iOS Safari */
+    -webkit-user-select: none;
+    /* Safari */
+    -khtml-user-select: none;
+    /* Konqueror HTML */
+    -moz-user-select: none;
+    /* Firefox */
+    -ms-user-select: none;
+    /* Internet Explorer/Edge */
+    user-select: none;
+    /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
 }
 
 .win-message {
@@ -55,4 +74,13 @@ td div {
 
 label {
     margin-right: 5px;
+}
+
+.new-game {
+    margin: 10px;
+}
+
+#table-container {
+    display: flex;
+    justify-content: center;
 }

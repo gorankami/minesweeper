@@ -44,52 +44,50 @@
 /* 0 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	var $                 = __webpack_require__(1),
-	    iconService       = __webpack_require__(2),
-	    settingsService   = __webpack_require__(4),
-	    navigationService = __webpack_require__(5),
-	    UI_STATES         = __webpack_require__(3),
-	    Table             = __webpack_require__(6);
+	const $ = __webpack_require__(1),
+	  iconService = __webpack_require__(2),
+	  settingsService = __webpack_require__(4),
+	  navigationService = __webpack_require__(5),
+	  UI_STATES = __webpack_require__(3),
+	  Table = __webpack_require__(6);
 
 	//DOM Elements
-	var fieldGridSize  = $("input#grid-size"),
-	    fieldNumMines  = $("input#num-mines"),
-	    btnStart       = $("#btn-start"),
-	    msgWin         = $(".win-message"),
-	    msgLose        = $(".lose-message"),
-	    tableContainer = $('#table-container');
+	const selectDifficulty = $("select#selectDifficulty"),
+	  btnStart = $("#btn-start"),
+	  msgWin = $(".win-message"),
+	  msgLose = $(".lose-message"),
+	  tableContainer = $('#table-container');
 
 	//Initialization
-	var table        = new Table();
+	var table = new Table();
 	var isFirstClick = false;
 	iconService.cacheIcons();
-	fieldGridSize.val(settingsService.size);
-	fieldNumMines.val(settingsService.minesCount);
 	btnStart.click(newGame);
+	$("#btn-easy").click(() => newGame("easy"));
+	$("#btn-medium").click(() => newGame("medium"));
+	$("#btn-hard").click(() => newGame("hard"));
 	newGame();
 
 	/**
 	 * Clears the board and populates cells, depending on provided size and mine number
 	 */
-	function newGame() {
+	function newGame(difficulty) {
+	  settingsService.init(difficulty);
+	  table.init(settingsService.size, settingsService.minesCount);
+	  var tableElement = table.render($);
+	  tableContainer.empty();
+	  tableContainer.append(tableElement);
+	  setupCellEvents(table.getCells());
+
+
 	  msgWin.hide();
 	  msgLose.hide();
-	  var size       = Number(fieldGridSize.val());
-	  var minesCount = Number(fieldNumMines.val());
-	  if (size < 10 || size > 40) {
-	    alert("Pick a size between 10 and 40.");
-	  } else if (minesCount < 10 || minesCount > 500) {
-	    alert("You can plant up to 500 mines, but not less than 10.");
-	  } else if (minesCount >= size * size) {
-	    alert("That amount of mines doesn't fit the board size. Pick less mines, or create a bigger board");
-	  } else {
-	    settingsService.init(size, minesCount);
-	    table.init(size, minesCount);
-	    var tableElement = table.render($);
-	    tableContainer.empty();
-	    tableContainer.append(tableElement);
-	    setupCellEvents(table.getCells());
-	  }
+	  const newCss = {
+	    "line-height": 16 * settingsService.size + "px",
+	    width: 16 * settingsService.size
+	  };
+	  msgWin.css(newCss);
+	  msgLose.css(newCss);
 	}
 
 	function setupCellEvents(cells) {
@@ -195,7 +193,7 @@
 
 	function middleClickUp(cell) {
 	  var neighbours = navigationService.getNeigbouringCellsArray(cell, table.getCells(), settingsService.size);
-	  var flagged    = neighbours.filter(function (neighbourCell) {
+	  var flagged = neighbours.filter(function (neighbourCell) {
 	    return neighbourCell && neighbourCell.uiState === UI_STATES.FLAGGED;
 	  });
 	  if (!cell.hasMine && flagged.length === cell.surroundingMinesCount && cell.uiState === UI_STATES.UNCOVERED) {
@@ -219,7 +217,6 @@
 	    });
 	  }
 	}
-
 
 	function lose(cells) {
 	  settingsService.clicksEnabled = false;
@@ -10697,28 +10694,37 @@
 /* 4 */
 /***/ (function(module, exports) {
 
-	var defaults = {
-	  size      : 10,
-	  minesCount: 10
-	};
-
 	/**
 	 * Settings service with default values set up
 	 * @type {Object}
 	 */
-	var settingsService = {
-	  size         : defaults.size,
-	  minesCount   : defaults.minesCount,
+	const settingsService = {
 	  clicksEnabled: true,
-	  init         : init
+	  init: init
 	};
 
 	module.exports = settingsService;
 
-	function init(size, minesCount) {
+	function init(difficulty) {
+	  setSettingsByDifficulty(difficulty);
 	  settingsService.clicksEnabled = true;
-	  settingsService.size          = size || defaults.size;
-	  settingsService.minesCount    = minesCount || defaults.minesCount;
+	}
+
+	function setSettingsByDifficulty(difficulty) {
+	  switch (difficulty) {
+	    case "medium":
+	      settingsService.size = 15;
+	      settingsService.minesCount = 30;
+	      break;
+	    case "hard":
+	      settingsService.size = 20;
+	      settingsService.minesCount = 80;
+	      break;
+	    default:
+	      settingsService.size = 10;
+	      settingsService.minesCount = 10;
+	      break;
+	  }
 	}
 
 /***/ }),

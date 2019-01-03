@@ -1,23 +1,32 @@
-var defaults = {
-  size      : 10,
-  minesCount: 10
-};
-
 /**
  * Settings service with default values set up
  * @type {Object}
  */
-var settingsService = {
-  size         : defaults.size,
-  minesCount   : defaults.minesCount,
+const settingsService = {
   clicksEnabled: true,
-  init         : init
+  init: init
 };
 
 module.exports = settingsService;
 
-function init(size, minesCount) {
+function init(difficulty) {
+  setSettingsByDifficulty(difficulty);
   settingsService.clicksEnabled = true;
-  settingsService.size          = size || defaults.size;
-  settingsService.minesCount    = minesCount || defaults.minesCount;
+}
+
+function setSettingsByDifficulty(difficulty) {
+  switch (difficulty) {
+    case "medium":
+      settingsService.size = 15;
+      settingsService.minesCount = 30;
+      break;
+    case "hard":
+      settingsService.size = 20;
+      settingsService.minesCount = 80;
+      break;
+    default:
+      settingsService.size = 10;
+      settingsService.minesCount = 10;
+      break;
+  }
 }

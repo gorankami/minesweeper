@@ -9,25 +9,14 @@
 </head>
 
 <body oncontextmenu="return false;">
-  <div class="game-panel-container">
-    <div class="game-panel">
-      <form action="javascript:void(0);">
-        <label for="grid-size">
-          Size
-          <input type="number" min="10" max="40" id="grid-size" />
-        </label>
-        <label for="num-mines">
-          Mines
-          <input type="number" min="10" max="500" id="num-mines" />
-        </label>
-        <button type="submit" id="btn-start">Start new game</button>
-      </form>
-    </div>
+  <div>
+    <button class="new-game" type="button" id="btn-easy">Easy</button>
+    <button class="new-game" type="button" id="btn-medium">medium</button>
+    <button class="new-game" type="button" id="btn-hard">Hard</button>
   </div>
-  <h2>MINESWEEPER</h2>
+  <h2 class="message win-message">You've won!</h2>
+  <h2 class="message lose-message">You've lost.</h2>
   <div id="table-container"></div>
-  <h2 class="win-message">You've won!</h2>
-  <h2 class="lose-message">You've lost.</h2>
   <script src="build/app.js"></script>
 </body>
 
