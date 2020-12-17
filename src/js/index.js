@@ -5,6 +5,8 @@ const $ = require("jquery"),
   UI_STATES = require("./enums/ui-states"),
   Table = require("./components/table");
 
+document.oncontextmenu = new Function("return false")
+
 //DOM Elements
 const selectDifficulty = $("select#selectDifficulty"),
   btnStart = $("#btn-start"),

@@ -51,6 +51,8 @@
 	  UI_STATES = __webpack_require__(3),
 	  Table = __webpack_require__(6);
 
+	document.oncontextmenu = new Function("return false")
+
 	//DOM Elements
 	const selectDifficulty = $("select#selectDifficulty"),
 	  btnStart = $("#btn-start"),
