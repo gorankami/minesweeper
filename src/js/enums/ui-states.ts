@@ -4,9 +4,9 @@
  * @readonly
  * @enum {number}
  */
-module.exports = {
-  HIDDEN: 0,
-  BEING_PRESSED: 1,
-  FLAGGED: 2,
-  UNCOVERED: 3
-};
+export enum UI_STATES {
+  HIDDEN = 0,
+  BEING_PRESSED = 1,
+  FLAGGED = 2,
+  UNCOVERED = 3
+}

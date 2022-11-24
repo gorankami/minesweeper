@@ -1,14 +1,8 @@
-var UI_STATES = require("./../enums/ui-states");
-
-var iconService = {
-  cacheIcons    : cacheIcons,
-  getIconForCell: getIconForCell
-};
-
-module.exports = iconService;
+import { Cell } from "../Cell";
+import { UI_STATES } from "../enums/ui-states";
 
 //cache images, prevents white surfaces on clicks
-function cacheIcons() {
+export function cacheIcons() {
   cache(icons.blank);
   cache(icons.pressed);
   cache(icons.exposedBomb);
@@ -17,7 +11,7 @@ function cacheIcons() {
   icons.bombs.forEach(cache);
 }
 
-function cache(url) {
+function cache(url: string) {
   var img = new Image();
   img.src = url;
 }
@@ -43,14 +37,14 @@ var icons = {
   ]
 };
 
-function getIconForCell(cell) {
+export function getIconForCell(cell: Cell) {
   switch (cell.uiState) {
     case UI_STATES.BEING_PRESSED:
       return icons.pressed;
     case UI_STATES.FLAGGED:
       return icons.flag;
     case UI_STATES.UNCOVERED:
-      if (cell.exploded) {
+      if (cell.hasExploded) {
         return icons.explodedBomb;
       } else if (cell.hasMine) {
         return icons.exposedBomb;
